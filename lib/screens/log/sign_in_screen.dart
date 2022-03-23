@@ -1,7 +1,7 @@
+import 'package:fire_base_app/services/auth/auth_service_interface.dart';
 import 'package:fire_base_app/shared/consts.dart';
 import 'package:fire_base_app/exceptions/service_exceptions/auth_service_exception.dart';
 import 'package:fire_base_app/shared/locator.dart';
-import 'package:fire_base_app/services/auth/auth_service.dart';
 import 'package:fire_base_app/shared/widgets/app_button.dart';
 import 'package:fire_base_app/shared/widgets/app_text_field.dart';
 import 'package:fire_base_app/shared/widgets/loading_widget.dart';
@@ -19,7 +19,7 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
-  final AuthService _auth = locator.get<AuthService>();
+  final AuthServiceInterface _auth = locator.get<AuthServiceInterface>();
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();

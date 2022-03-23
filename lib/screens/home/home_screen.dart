@@ -1,5 +1,6 @@
 import 'package:fire_base_app/screens/map/map_screen.dart';
 import 'package:fire_base_app/screens/profile/profile_screen.dart';
+import 'package:fire_base_app/services/auth/auth_service_interface.dart';
 import 'package:fire_base_app/shared/locator.dart';
 import 'package:fire_base_app/models/app_user/app_user.dart';
 import 'package:fire_base_app/services/auth/auth_service.dart';
@@ -17,7 +18,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final AuthService _auth = locator.get<AuthService>();
+  final AuthServiceInterface _auth = locator.get<AuthServiceInterface>();
   int currentIndex = 0;
   final screens = [ProfileScreen(), MapScreen()];
 
@@ -43,8 +44,8 @@ class _HomeScreenState extends State<HomeScreen> {
         children: screens,
       ),
       bottomNavigationBar: BottomNavBar(
-        onItemTap: _onBottomNavBarItemTap,
         currentIndex: currentIndex,
+        onItemTap: _onBottomNavBarItemTap,
       ),
     );
   }

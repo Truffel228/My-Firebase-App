@@ -3,10 +3,12 @@ import 'package:fire_base_app/screens/map/widgets/map_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 
 class MapWidget extends StatefulWidget {
-  const MapWidget({Key? key}) : super(key: key);
+  const MapWidget({Key? key, required this.userPosition}) : super(key: key);
+  final Position? userPosition;
 
   @override
   State<MapWidget> createState() => _MapWidgetState();
@@ -23,19 +25,37 @@ class _MapWidgetState extends State<MapWidget> {
         FlutterMap(
           mapController: _mapController,
           options: MapOptions(
-            center: LatLng(55.753428, 37.621267),
-            zoom: 13,
+            minZoom: 3,
+            maxZoom: 18,
+            center: widget.userPosition != null
+                ? LatLng(widget.userPosition!.latitude,
+                    widget.userPosition!.longitude)
+                : LatLng(55.754617, 37.622554),
+            zoom: 15,
           ),
           layers: [
             TileLayerOptions(
               urlTemplate:
                   'https://tile2.maps.2gis.com/tiles?x={x}&y={y}&z={z}&v=1&ts=online_hd',
             ),
+            MarkerLayerOptions(
+              markers: [
+                if (widget.userPosition != null)
+                  Marker(
+                    builder: (BuildContext context) {
+                      return Icon(FontAwesomeIcons.locationCrosshairs);
+                    },
+                    point: LatLng(widget.userPosition!.latitude,
+                        widget.userPosition!.longitude),
+                  ),
+              ],
+            ),
           ],
         ),
         IgnorePointer(
           ignoring: true,
           child: Center(
+            heightFactor: 100,
             child: Icon(
               FontAwesomeIcons.mapPin,
               color: theme.primaryColor,

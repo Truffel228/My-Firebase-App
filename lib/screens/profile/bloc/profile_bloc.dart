@@ -1,22 +1,21 @@
 import 'package:bloc/bloc.dart';
 import 'package:fire_base_app/models/user_data/user_data.dart';
-import 'package:fire_base_app/services/database/database_service.dart';
-import 'package:fire_base_app/shared/locator.dart';
+import 'package:fire_base_app/services/database/database_service_interface.dart';
 import 'package:meta/meta.dart';
 
 part 'profile_event.dart';
 part 'profile_state.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
-  ProfileBloc() : super(ProfileLoading()) {
+  final DatabaseServiceInterface _databaseService;
+  ProfileBloc({required databaseService})
+      : _databaseService = databaseService,
+        super(ProfileLoading()) {
     on<ProfileFetchEvent>(_onProfileFetchEvent);
     on<ProfileSaveEvent>(_onProfileSaveEvent);
   }
   void _onProfileFetchEvent(event, emit) async {
-    final userData =
-
-        ///Dependencies injection in bloc
-        await locator.get<DatabaseService>().getUserData(event.uid);
+    final userData = await _databaseService.getUserData(event.uid);
     //TODO: For testing
     await Future.delayed(
       Duration(seconds: 1),
@@ -35,9 +34,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         await Future.delayed(
           Duration(seconds: 1),
         );
-        await locator
-            .get<DatabaseService>()
-            .updateUserData(uid: event.uid, userData: event.userData);
+        await _databaseService.updateUserData(
+            uid: event.uid, userData: event.userData);
         emit(
           ProfileLoaded(
               userData: event.userData, message: 'Your data has been saved'),

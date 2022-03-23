@@ -1,5 +1,9 @@
+import 'package:fire_base_app/screens/map/bloc/map_bloc.dart';
 import 'package:fire_base_app/screens/profile/bloc/profile_bloc.dart';
+import 'package:fire_base_app/services/auth/auth_service_interface.dart';
 import 'package:fire_base_app/services/database/database_service.dart';
+import 'package:fire_base_app/services/database/database_service_interface.dart';
+import 'package:fire_base_app/services/geo/geo_service_interface.dart';
 import 'package:fire_base_app/shared/locator.dart';
 import 'package:fire_base_app/models/app_user/app_user.dart';
 import 'package:fire_base_app/shared/router.dart';
@@ -22,16 +26,23 @@ void main() async {
 class MyApp extends StatelessWidget {
   MyApp({Key? key}) : super(key: key);
 
-  final AuthService _auth = locator.get<AuthService>();
-  final DatabaseService _database = locator.get<DatabaseService>();
+  final AuthServiceInterface _authService = locator.get<AuthServiceInterface>();
+  final DatabaseServiceInterface _databaseService =
+      locator.get<DatabaseServiceInterface>();
+  final GeoServiceInterface _geoService = locator.get<GeoServiceInterface>();
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => ProfileBloc(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => ProfileBloc(databaseService: _databaseService),
+        ),
+        BlocProvider(create: (context) => MapBloc(geoService: _geoService)),
+      ],
       child: StreamProvider<AppUser?>.value(
         initialData: null,
-        value: _auth.onAuthStateChanged,
+        value: _authService.onAuthStateChanged,
         child: MaterialApp(
           theme: lightTheme,
           title: 'Flutter Demo',

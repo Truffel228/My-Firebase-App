@@ -1,3 +1,5 @@
+import 'package:fire_base_app/services/auth/auth_service_interface.dart';
+import 'package:fire_base_app/services/database/database_service_interface.dart';
 import 'package:fire_base_app/shared/consts.dart';
 import 'package:fire_base_app/shared/locator.dart';
 import 'package:fire_base_app/models/app_user/app_user.dart';
@@ -19,8 +21,8 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  final DatabaseService _database = locator.get<DatabaseService>();
-  final AuthService _auth = locator.get<AuthService>();
+  final DatabaseServiceInterface _database = locator.get<DatabaseServiceInterface>();
+  final AuthServiceInterface _auth = locator.get<AuthServiceInterface>();
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
