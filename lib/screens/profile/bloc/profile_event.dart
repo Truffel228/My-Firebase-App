@@ -4,12 +4,12 @@ part of 'profile_bloc.dart';
 abstract class ProfileEvent {}
 
 class ProfileFetchEvent extends ProfileEvent {
-  ProfileFetchEvent(this.uid);
-  final String uid;
+  ProfileFetchEvent(this.uuid);
+  final String uuid;
 }
 
 class ProfileSaveEvent extends ProfileEvent {
-  ProfileSaveEvent({required this.userData, required this.uid});
+  ProfileSaveEvent({required this.userData, required this.uuid});
   final UserData userData;
-  final String uid;
+  final String uuid;
 }

@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 final OutlineInputBorder _border = OutlineInputBorder(
   borderRadius: BorderRadius.circular(10.0),
   borderSide: BorderSide(
-    color: purpleColor,
+    color: stylePurpleColor,
     width: 2,
   ),
 );
@@ -13,7 +13,7 @@ final OutlineInputBorder _border = OutlineInputBorder(
 final OutlineInputBorder _errorBorder = OutlineInputBorder(
   borderRadius: BorderRadius.circular(10.0),
   borderSide: BorderSide(
-    color: darkRedColor,
+    color: styleDarkRedColor,
     width: 2,
   ),
 );
@@ -26,6 +26,8 @@ class AppTextField extends StatelessWidget {
     this.validator,
     this.onChanged,
     this.inputFormatters,
+    this.maxLines,
+    this.minLines,
   }) : super(key: key);
 
   final String? hintText;
@@ -33,10 +35,14 @@ class AppTextField extends StatelessWidget {
   final String? Function(String?)? validator;
   final Function(String)? onChanged;
   final List<TextInputFormatter>? inputFormatters;
+  final int? maxLines;
+  final int? minLines;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      minLines: minLines,
+      maxLines: maxLines,
       inputFormatters: inputFormatters,
       onChanged: onChanged,
       validator: validator,
@@ -46,7 +52,7 @@ class AppTextField extends StatelessWidget {
         enabledBorder: _border,
         focusedBorder: _border,
         errorBorder: _errorBorder,
-        errorStyle: TextStyle(fontWeight: FontWeight.bold, color: darkRedColor),
+        errorStyle: TextStyle(fontWeight: FontWeight.bold, color: styleDarkRedColor),
         focusedErrorBorder: _errorBorder,
       ),
     );

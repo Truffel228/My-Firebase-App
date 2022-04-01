@@ -1,6 +1,6 @@
 import 'package:fire_base_app/models/app_user/app_user.dart';
 import 'package:fire_base_app/models/map_comment/map_comment.dart';
-import 'package:fire_base_app/models/user_data/user_data.dart';
+import 'package:fire_base_app/models/user_data/user_data/user_data.dart';
 import 'package:fire_base_app/screens/profile/bloc/profile_bloc.dart';
 import 'package:fire_base_app/services/database/database_service.dart';
 import 'package:fire_base_app/shared/locator.dart';
@@ -101,7 +101,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void _onSave(List<MapComment> mapComments) {
     _bloc.add(
       ProfileSaveEvent(
-        uid: uid,
+        uuid: uid,
         userData: UserData(
           mapComments: mapComments,
           name: _nameController.text,

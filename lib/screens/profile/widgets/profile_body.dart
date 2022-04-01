@@ -1,5 +1,5 @@
 import 'package:fire_base_app/models/map_comment/map_comment.dart';
-import 'package:fire_base_app/models/user_data/user_data.dart';
+import 'package:fire_base_app/models/user_data/user_data/user_data.dart';
 import 'package:fire_base_app/shared/widgets/app_button.dart';
 import 'package:fire_base_app/shared/widgets/app_text_field.dart';
 import 'package:fire_base_app/shared/widgets/loading_widget.dart';
@@ -82,14 +82,10 @@ class _ProfileBodyState extends State<ProfileBody> {
           mapComments.isNotEmpty
               ? Expanded(
                   child: ListView.builder(
-                      itemCount: mapComments.length,
-                      itemBuilder: (context, index) => Container(
-                            width: double.infinity,
-                            height: 50,
-                            color: Colors.green,
-                            child: Text(
-                                '${mapComments[index].latitude} ${mapComments[index].longitude} - ${mapComments[index].comment}'),
-                          )),
+                    itemCount: mapComments.length,
+                    itemBuilder: (context, index) =>
+                        MapCommentListItem(mapComment: mapComments[index]),
+                  ),
                 )
               : const Expanded(
                   child: Center(
@@ -104,5 +100,34 @@ class _ProfileBodyState extends State<ProfileBody> {
   void _onSave() {
     widget.onSave(mapComments);
     FocusScope.of(context).requestFocus(FocusNode());
+  }
+}
+
+class MapCommentListItem extends StatelessWidget {
+  const MapCommentListItem({Key? key, required this.mapComment})
+      : super(key: key);
+  final MapComment mapComment;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+      padding: EdgeInsets.symmetric(vertical: 2, horizontal: 5),
+      decoration: BoxDecoration(
+        color: Colors.grey,
+        border: Border.all(
+          color: theme.primaryColor,
+          width: 2,
+        ),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      width: double.infinity,
+      height: 50,
+      child: Center(
+        child: Text(
+            '${mapComment.latitude} ${mapComment.longitude} - ${mapComment.comment}'),
+      ),
+    );
   }
 }

@@ -8,20 +8,21 @@ final ThemeData lightTheme = ThemeData(
   splashColor: transparentColor,
   highlightColor: transparentColor,
   appBarTheme: AppBarTheme(
-      backgroundColor: purpleColor, elevation: 0, centerTitle: true),
-  primaryColor: purpleColor,
-  errorColor: darkRedColor,
+      backgroundColor: stylePurpleColor, elevation: 0, centerTitle: true),
+  primaryColor: stylePurpleColor,
+  errorColor: styleDarkRedColor,
   textTheme: lightTextTheme,
   textSelectionTheme: TextSelectionThemeData(
-    cursorColor: lightPurpleColor,
-    selectionHandleColor: lightPurpleColor,
-    selectionColor: purpleColor.withOpacity(0.5),
+    cursorColor: styleLightPurpleColor,
+    selectionHandleColor: styleLightPurpleColor,
+    selectionColor: stylePurpleColor.withOpacity(0.5),
   ),
 );
 
-const Color purpleColor = Color(0xFF7E0080);
-const Color lightPurpleColor = Color(0xFF9B51B4);
-const Color pinkColor = Color(0xFFDF6FA0);
-const Color redColor = Color(0xFFEF224B);
-const Color darkRedColor = Color(0xFFC20232);
+const Color stylePurpleColor = Color(0xFF7E0080);
+const Color styleLightPurpleColor = Color(0xFF9B51B4);
+const Color stylePinkColor = Color(0xFFDF6FA0);
+const Color styleRedColor = Color(0xFFEF224B);
+const Color styleDarkRedColor = Color(0xFFC20232);
+const Color styleGreenColor = Color(0xFF38B64A);
 const Color transparentColor = Colors.transparent;

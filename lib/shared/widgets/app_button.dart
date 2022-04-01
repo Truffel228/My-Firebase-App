@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 class AppButton extends StatelessWidget {
-  const AppButton({Key? key, this.onPressed, this.child}) : super(key: key);
+  const AppButton({Key? key, this.onPressed, this.child, this.color})
+      : super(key: key);
 
   final VoidCallback? onPressed;
   final Widget? child;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
@@ -17,9 +19,10 @@ class AppButton extends StatelessWidget {
           // As you said you dont need elevation. I'm returning 0 in both case
           (Set<MaterialState> states) {
             if (states.contains(MaterialState.disabled)) {
-              return theme.primaryColor;
+              return color ?? theme.primaryColor;
             }
-            return theme.primaryColor; // Defer to the widget's default.
+            return color ??
+                theme.primaryColor; // Defer to the widget's default.
           },
         ),
         elevation: MaterialStateProperty.resolveWith<double>(
