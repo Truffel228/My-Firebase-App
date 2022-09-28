@@ -28,6 +28,8 @@ class AppTextField extends StatelessWidget {
     this.inputFormatters,
     this.maxLines,
     this.minLines,
+    this.enabled,
+    this.initialValue,
   }) : super(key: key);
 
   final String? hintText;
@@ -37,10 +39,14 @@ class AppTextField extends StatelessWidget {
   final List<TextInputFormatter>? inputFormatters;
   final int? maxLines;
   final int? minLines;
+  final bool? enabled;
+  final String? initialValue;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      initialValue: initialValue,
+      enabled: enabled,
       minLines: minLines,
       maxLines: maxLines,
       inputFormatters: inputFormatters,
@@ -49,10 +55,12 @@ class AppTextField extends StatelessWidget {
       controller: controller,
       decoration: InputDecoration(
         hintText: hintText,
+        disabledBorder: _border,
         enabledBorder: _border,
         focusedBorder: _border,
         errorBorder: _errorBorder,
-        errorStyle: TextStyle(fontWeight: FontWeight.bold, color: styleDarkRedColor),
+        errorStyle:
+            TextStyle(fontWeight: FontWeight.bold, color: styleDarkRedColor),
         focusedErrorBorder: _errorBorder,
       ),
     );

@@ -5,6 +5,7 @@ import 'package:fire_base_app/models/user_data/user_data_api/user_data_api.dart'
 import 'package:fire_base_app/services/database/database_service_interface.dart';
 
 class DatabaseService extends DatabaseServiceInterface {
+  /// Collections references
   final CollectionReference usersCollection =
       FirebaseFirestore.instance.collection('users');
   final CollectionReference mapCommentsCollection =
@@ -12,21 +13,19 @@ class DatabaseService extends DatabaseServiceInterface {
 
   @override
   Future<void> updateUserData(
-      {required String uid, required UserData userData}) async {
+      {required String userId, required UserData userData}) async {
     final userDataApi = userData.toApi();
-    return await usersCollection.doc(uid).set(userDataApi.toJson());
-
+    return await usersCollection.doc(userId).set(userDataApi.toJson());
   }
 
   @override
   Future<UserData> getUserData(String uid) async {
-    final userDataApi = await getUserDataApi(uid);
+    final userDataApi = await _getUserDataApi(uid);
     final userData = await userDataFromApiToModel(userDataApi);
     return userData;
   }
 
-  @override
-  Future<UserDataApi> getUserDataApi(String uid) async {
+  Future<UserDataApi> _getUserDataApi(String uid) async {
     final user = await usersCollection.doc(uid).get();
     final userApiMap = user.data() as Map<String, dynamic>;
     //TODO: Убрать
@@ -39,7 +38,7 @@ class DatabaseService extends DatabaseServiceInterface {
     final initialUserData =
         UserData(name: 'Username', age: 18, mapComments: []);
     //TODO: Доделать
-    updateUserData(uid: uid, userData: initialUserData);
+    updateUserData(userId: uid, userData: initialUserData);
   }
 
   @override
@@ -49,15 +48,17 @@ class DatabaseService extends DatabaseServiceInterface {
 
   @override
   Future<void> saveCommentIdToUser(
-      {required String commentUid, required String userId}) async {
+      {required String commentId, required String userId}) async {
     final mapCommentIds = await _getUserCommentIds(userId) as List<String>;
-    mapCommentIds.add(commentUid);
+    mapCommentIds.add(commentId);
     //TODO: Set comment ids to user
-    return await usersCollection.doc(userId).update({'mapCommentIds': mapCommentIds});
+    return await usersCollection
+        .doc(userId)
+        .update({'mapCommentIds': mapCommentIds});
   }
 
   Future<List<String>> _getUserCommentIds(String userId) async {
-    final UserDataApi userDataApi = await getUserDataApi(userId);
+    final UserDataApi userDataApi = await _getUserDataApi(userId);
     return userDataApi.mapCommentIds;
   }
 
@@ -77,5 +78,30 @@ class DatabaseService extends DatabaseServiceInterface {
   @override
   Future<void> setUserName(String uid, String name) async {
     return await usersCollection.doc(uid).update({'name': name});
+  }
+
+  @override
+  Future<List<MapComment>> getAllMapComments() async {
+    try {
+      /// TODO: проверить что вернёт метод если коллекция пуста
+      final result = await mapCommentsCollection.get();
+      final listMap =
+          result.docs.map((doc) => doc.data() as Map<String, dynamic>);
+      final listMapComment =
+          listMap.map((map) => MapComment.fromJson(map)).toList();
+      return listMapComment;
+    } catch (e) {
+      print(e);
+      throw Exception(e);
+    }
+  }
+
+  @override
+  Future<void> deleteMapComment(String commentId) async {
+    try {
+      await mapCommentsCollection.doc(commentId).delete();
+    } catch (e) {
+      throw Exception(e);
+    }
   }
 }

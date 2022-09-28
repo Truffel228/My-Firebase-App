@@ -1,4 +1,3 @@
-import 'package:fire_base_app/shared/router.dart';
 import 'package:fire_base_app/shared/widgets/app_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -16,15 +15,14 @@ class _CommentButtonState extends State<CommentButton> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return InkWell(
-      onTap: widget
-          .onTap, //() => Navigator.pushNamed(context, Routes.commentFormScreen),
+      onTap: widget.onTap,
       child: ClipRRect(
-        borderRadius: BorderRadius.all(Radius.circular(25)),
+        borderRadius: const BorderRadius.all(const Radius.circular(25)),
         child: Container(
           width: 170,
           height: 50,
-          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-          decoration: BoxDecoration(color: Colors.white),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          decoration: const BoxDecoration(color: Colors.white),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -49,8 +47,8 @@ class _CommentButtonState extends State<CommentButton> {
     showModalBottomSheet(
       isDismissible: false,
       isScrollControlled: true,
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      shape: const RoundedRectangleBorder(
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20))),
       context: context,
       builder: (context) {
         return InkWell(
@@ -58,11 +56,11 @@ class _CommentButtonState extends State<CommentButton> {
           child: Container(
             height: MediaQuery.of(context).size.height * 0.6,
             child: Column(
-              children: [
+              children: const [
                 SizedBox(height: 20),
                 Form(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                    padding: EdgeInsets.symmetric(horizontal: 15.0),
                     child: AppTextField(
                       minLines: 2,
                       maxLines: 5,

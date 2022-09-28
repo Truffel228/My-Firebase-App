@@ -1,24 +1,32 @@
+import 'package:fire_base_app/models/app_user/app_user.dart';
 import 'package:fire_base_app/models/map_comment/map_comment.dart';
 import 'package:fire_base_app/models/user_data/user_data/user_data.dart';
+import 'package:fire_base_app/shared/style.dart';
+import 'package:fire_base_app/shared/widgets/map_comment_list_item.dart';
 import 'package:fire_base_app/shared/widgets/app_button.dart';
 import 'package:fire_base_app/shared/widgets/app_text_field.dart';
 import 'package:fire_base_app/shared/widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 
 class ProfileBody extends StatefulWidget {
-  const ProfileBody(
-      {Key? key,
-      required this.userData,
-      required this.isSaving,
-      required this.onSave,
-      required this.nameController,
-      required this.ageController})
-      : super(key: key);
+  const ProfileBody({
+    Key? key,
+    required this.userData,
+    required this.isSaving,
+    required this.onSave,
+    required this.nameController,
+    required this.ageController,
+    required this.onCommentDelete,
+  }) : super(key: key);
   final UserData userData;
   final bool isSaving;
   final Function(List<MapComment>) onSave;
   final TextEditingController nameController;
   final TextEditingController ageController;
+  final Function(List<MapComment>, String) onCommentDelete;
 
   @override
   _ProfileBodyState createState() => _ProfileBodyState();
@@ -26,16 +34,14 @@ class ProfileBody extends StatefulWidget {
 
 class _ProfileBodyState extends State<ProfileBody> {
   late final List<MapComment> mapComments;
+  late final String userId;
 
   @override
   void initState() {
     super.initState();
     mapComments = widget.userData.mapComments;
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+    userId = context.read<AppUser?>()!.uid;
+    print('Profile Body init');
   }
 
   @override
@@ -48,7 +54,7 @@ class _ProfileBodyState extends State<ProfileBody> {
         children: [
           const SizedBox(height: 20),
           CircleAvatar(
-            minRadius: MediaQuery.of(context).size.width * 0.2,
+            radius: MediaQuery.of(context).size.width * 0.2,
           ),
           const SizedBox(height: 20),
           Row(
@@ -83,8 +89,26 @@ class _ProfileBodyState extends State<ProfileBody> {
               ? Expanded(
                   child: ListView.builder(
                     itemCount: mapComments.length,
-                    itemBuilder: (context, index) =>
-                        MapCommentListItem(mapComment: mapComments[index]),
+                    itemBuilder: (context, index) => Slidable(
+                      endActionPane: ActionPane(
+                        motion: const ScrollMotion(),
+                        children: [
+                          SlidableAction(
+                            onPressed: (_) =>
+                                _onCommentDelete(index, mapComments[index].id),
+                            icon: FontAwesomeIcons.trash,
+                            backgroundColor: styleDarkRedColor,
+                          ),
+                        ],
+                      ),
+                      child: MapCommentListItem(
+                        enabled: true,
+                        onItemDelete: () =>
+                            _onCommentDelete(index, mapComments[index].id),
+                        index: index,
+                        mapComment: mapComments[index],
+                      ),
+                    ),
                   ),
                 )
               : const Expanded(
@@ -101,33 +125,15 @@ class _ProfileBodyState extends State<ProfileBody> {
     widget.onSave(mapComments);
     FocusScope.of(context).requestFocus(FocusNode());
   }
-}
 
-class MapCommentListItem extends StatelessWidget {
-  const MapCommentListItem({Key? key, required this.mapComment})
-      : super(key: key);
-  final MapComment mapComment;
+  void _onCommentDelete(int index, String commentId) {
+    setState(() {
+      mapComments.removeAt(index);
+    });
 
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-      padding: EdgeInsets.symmetric(vertical: 2, horizontal: 5),
-      decoration: BoxDecoration(
-        color: Colors.grey,
-        border: Border.all(
-          color: theme.primaryColor,
-          width: 2,
-        ),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      width: double.infinity,
-      height: 50,
-      child: Center(
-        child: Text(
-            '${mapComment.latitude} ${mapComment.longitude} - ${mapComment.comment}'),
-      ),
-    );
+    /// После того как удалили коментарий из списка кидаем ивент на удаление,
+    /// в нём на сервер будет сохранятся новый список коментариев уже без удалённого
+    /// коментария
+    widget.onCommentDelete(mapComments, commentId);
   }
 }

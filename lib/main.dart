@@ -1,8 +1,10 @@
 import 'package:fire_base_app/screens/map/bloc/map_bloc.dart';
+import 'package:fire_base_app/screens/map_comment/bloc/map_comment_screen_bloc.dart';
 import 'package:fire_base_app/screens/profile/bloc/profile_bloc.dart';
 import 'package:fire_base_app/services/auth/auth_service_interface.dart';
 import 'package:fire_base_app/services/database/database_service_interface.dart';
-import 'package:fire_base_app/services/geo/geolocation_service_interface.dart';
+import 'package:fire_base_app/services/geolocation/geolocation_service_interface.dart';
+import 'package:fire_base_app/shared/app_bloc_observer.dart';
 import 'package:fire_base_app/shared/locator.dart';
 import 'package:fire_base_app/models/app_user/app_user.dart';
 import 'package:fire_base_app/shared/router.dart';
@@ -13,11 +15,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 
+import 'wrappers/connection/bloc/connection_wrapper_bloc.dart';
+import 'wrappers/connection/connection_wrapper.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   setUp();
-  runApp(MyApp());
+  BlocOverrides.runZoned(()=>runApp(MyApp()), blocObserver: AppBlocObserver());
+
 }
 
 class MyApp extends StatelessWidget {
@@ -33,6 +39,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider(create: (context) => ConnectionWrapperBloc()),
+        BlocProvider(
+          create: (context) =>
+              MapCommentScreenBloc(databaseService: _databaseService),
+        ),
         BlocProvider(
           create: (context) => ProfileBloc(databaseService: _databaseService),
         ),
@@ -47,7 +58,7 @@ class MyApp extends StatelessWidget {
         child: MaterialApp(
           theme: lightTheme,
           title: 'Flutter Demo',
-          home: LogHomeWrapper(),
+          home: ConnectionWrapper(child: LogHomeWrapper()),
           routes: Routes.routes,
         ),
       ),

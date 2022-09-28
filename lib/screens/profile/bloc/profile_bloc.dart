@@ -1,4 +1,6 @@
 import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
+import 'package:fire_base_app/models/map_comment/map_comment.dart';
 import 'package:fire_base_app/models/user_data/user_data/user_data.dart';
 import 'package:fire_base_app/services/database/database_service_interface.dart';
 import 'package:meta/meta.dart';
@@ -13,17 +15,19 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         super(ProfileLoading()) {
     on<ProfileFetchEvent>(_onProfileFetchEvent);
     on<ProfileSaveEvent>(_onProfileSaveEvent);
+    on<ProfileSaveAfterDeleteCommentEvent>(
+        _onProfileSaveAfterDeleteCommentEvent);
   }
-  void _onProfileFetchEvent(ProfileFetchEvent event, emit) async {
+  void _onProfileFetchEvent(
+      ProfileFetchEvent event, Emitter<ProfileState> emit) async {
+    emit(ProfileLoading());
+    print('Profile Fetch Event in Profile Bloc');
     final userData = await _databaseService.getUserData(event.uuid);
-    //TODO: For testing
-    await Future.delayed(
-      Duration(seconds: 1),
-    );
     emit(ProfileLoaded(userData: userData));
   }
 
-  void _onProfileSaveEvent(ProfileSaveEvent event, emit) async {
+  void _onProfileSaveEvent(
+      ProfileSaveEvent event, Emitter<ProfileState> emit) async {
     final state = this.state;
     if (state is ProfileLoaded) {
       var userData = state.userData;
@@ -35,7 +39,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
           Duration(seconds: 1),
         );
         await _databaseService.updateUserData(
-            uid: event.uuid, userData: event.userData);
+            userId: event.userId, userData: event.userData);
         emit(
           ProfileLoaded(
               userData: event.userData, message: 'Your data has been saved'),
@@ -48,6 +52,19 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
           ProfileLoaded(userData: state.userData),
         );
       }
+    }
+  }
+
+  void _onProfileSaveAfterDeleteCommentEvent(
+      ProfileSaveAfterDeleteCommentEvent event,
+      Emitter<ProfileState> emit) async {
+    try{
+      emit(ProfileSaving(userData: event.userData));
+      await _databaseService.updateUserData(userId: event.userId, userData: event.userData);
+      await _databaseService.deleteMapComment(event.deletedCommentId);
+      print('dfafadf');
+    } catch(e){
+
     }
   }
 }

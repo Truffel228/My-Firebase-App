@@ -1,8 +1,12 @@
+import 'package:fire_base_app/models/app_user/app_user.dart';
 import 'package:fire_base_app/screens/map/bloc/map_bloc.dart';
 import 'package:fire_base_app/screens/map/widgets/map_widget.dart';
+import 'package:fire_base_app/screens/profile/bloc/profile_bloc.dart';
 import 'package:fire_base_app/shared/widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'widgets/widgets.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({Key? key}) : super(key: key);
@@ -12,30 +16,59 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-  late final MapBloc _bloc;
+
+  late final String userId;
 
   @override
   void initState() {
     super.initState();
-    _bloc = context.read<MapBloc>()..add(MapLoadEvent());
+    context.read<MapBloc>().add(MapLoadEvent());
+    userId = context.read<AppUser?>()!.uid;
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<MapBloc, MapState>(builder: (context, state) {
-      if (state is MapLoading) {
+    return BlocListener<MapBloc,MapState>(
+      listenWhen: (previousState, currentState){
+        return previousState is MapCommentSaving && currentState is MapLoaded;
+      },
+      listener: (context, state){
+        context.read<ProfileBloc>().add(ProfileFetchEvent(userId));
+        print('Added Event To Profile Bloc');
+      },
+      child: BlocBuilder<MapBloc, MapState>(builder: (context, state) {
+        if (state is MapLoading) {
+          return Center(
+            child: LoadingWidget(),
+          );
+        }
+        if (state is MapCommentSaving) {
+          return MapWidget(
+            cameraPosition: state.cameraPosition,
+            isCommentSaving: true,
+            mapComments: state.mapComments,
+            userPosition: state.userPosition,
+          );
+        }
+        if (state is MapLoaded) {
+          print('MapLoaded');
+          /// Когда прокидываем MapLoaded в очередной раз после того как изменилась
+          /// позиция юзера должен же рисоваться новый виджет и его поля
+          /// bool isCommentOpen = false;
+          /// bool isCommentShowInner = false;
+          /// должны обращаться в false всякий раз когда мы прокидываем MapLoaded стейт
+          /// но поля почему то не обновляются и CommentForm остаётся постоянно открытой
+          /// даже в процессе постройки нового MapWidget
+          return MapWidget(
+            cameraPosition: state.cameraPosition,
+            mapComments: state.mapComments,
+            userPosition: state.userPosition,
+          );
+        }
         return Center(
-          child: LoadingWidget(),
+          child: Text('Error'),
         );
-      }
-      if (state is MapLoaded) {
-        return MapWidget(
-          userPosition: state.position,
-        );
-      }
-      return Center(
-        child: Text('dalfafdk'),
-      );
-    });
+      },),
+    );
   }
 }

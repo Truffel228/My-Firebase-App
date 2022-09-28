@@ -1,6 +1,7 @@
 import 'package:fire_base_app/models/app_user/app_user.dart';
 import 'package:fire_base_app/screens/home/home_screen.dart';
 import 'package:fire_base_app/screens/log/log_screen_wrapper.dart';
+import 'package:fire_base_app/shared/widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -10,6 +11,20 @@ class LogHomeWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appUser = Provider.of<AppUser?>(context);
-    return appUser == null ? LogScreenWrapper() : HomeScreen();
+    return FutureBuilder(
+        future: Future.delayed(
+          Duration(seconds: 0),
+        ),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return appUser == null ? LogScreenWrapper() : HomeScreen();
+          } else {
+            return Scaffold(
+              body: Center(
+                child: LoadingWidget(),
+              ),
+            );
+          }
+        });
   }
 }

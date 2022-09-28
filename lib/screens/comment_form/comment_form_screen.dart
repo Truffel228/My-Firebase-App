@@ -2,8 +2,8 @@ import 'package:fire_base_app/shared/widgets/app_button.dart';
 import 'package:fire_base_app/shared/widgets/app_text_field.dart';
 import 'package:flutter/material.dart';
 
-class CommentFromScreen extends StatelessWidget {
-  const CommentFromScreen({Key? key}) : super(key: key);
+class CommentFormScreen extends StatelessWidget {
+  CommentFormScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,20 +19,18 @@ class CommentFromScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                SizedBox(
+                const SizedBox(
                   height: 0,
                 ),
-                Form(
-                  child: AppTextField(
-                    minLines: 2,
-                    maxLines: 5,
-                  ),
+                const AppTextField(
+                  minLines: 2,
+                  maxLines: 5,
                 ),
                 Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10.0),
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
+                    children: const [
                       AppButton(
                         color: Colors.red,
                         child: Text('Cancel'),

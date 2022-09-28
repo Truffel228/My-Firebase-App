@@ -1,4 +1,4 @@
-import 'package:fire_base_app/services/geo/geolocation_service_interface.dart';
+import 'package:fire_base_app/services/geolocation/geolocation_service_interface.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
 
@@ -31,6 +31,21 @@ class GeolocationService implements GeolocationServiceInterface {
     } catch (e) {
       print(e);
       return null;
+    }
+  }
+
+  LatLng _LatLngFromLocationData(LocationData locationData) {
+    return LatLng(locationData.latitude!, locationData.longitude!);
+  }
+
+  @override
+  Stream<LatLng?> onPositionChanged() async* {
+    try {
+      yield* location.onLocationChanged.map(_LatLngFromLocationData);
+    } catch (e) {
+      print(
+          'No location access in onPositionChanged method in GeolocatonService');
+      yield null;
     }
   }
 }

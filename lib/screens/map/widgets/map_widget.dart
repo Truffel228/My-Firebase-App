@@ -4,17 +4,30 @@ import 'package:fire_base_app/screens/map/bloc/map_bloc.dart';
 import 'package:fire_base_app/screens/map/widgets/comment_button.dart';
 import 'package:fire_base_app/screens/map/widgets/comment_form.dart';
 import 'package:fire_base_app/screens/map/widgets/map_button.dart';
+import 'package:fire_base_app/screens/map/widgets/map_comment_marker.dart';
+import 'package:fire_base_app/screens/map/widgets/map_comment_marker_cluster.dart';
+import 'package:fire_base_app/shared/widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:latlong2/latlong.dart';
 
 const Duration commentFormAnimationDuration = Duration(milliseconds: 500);
 
 class MapWidget extends StatefulWidget {
-  const MapWidget({Key? key, required this.userPosition}) : super(key: key);
+  const MapWidget(
+      {Key? key,
+      required this.userPosition,
+      required this.mapComments,
+      this.isCommentSaving = false,
+      required this.cameraPosition})
+      : super(key: key);
   final LatLng? userPosition;
+  final List<MapComment> mapComments;
+  final bool isCommentSaving;
+  final LatLng? cameraPosition;
 
   @override
   State<MapWidget> createState() => _MapWidgetState();
@@ -31,6 +44,7 @@ class _MapWidgetState extends State<MapWidget> {
   void initState() {
     super.initState();
     appUserUid = context.read<AppUser?>()!.uid;
+    print('Map Widget init');
   }
 
   @override
@@ -41,25 +55,25 @@ class _MapWidgetState extends State<MapWidget> {
         InkWell(
           onTap: () {
             FocusScope.of(context).requestFocus(FocusNode());
-            print('dlaf');
           },
           child: IgnorePointer(
             ignoring: isCommentOpen,
             child: FlutterMap(
               mapController: _mapController,
               options: MapOptions(
+                onPositionChanged: _onCameraPositionChanged,
+                plugins: [
+                  MarkerClusterPlugin(),
+                ],
                 interactiveFlags: InteractiveFlag.pinchZoom |
                     InteractiveFlag.drag |
                     InteractiveFlag.doubleTapZoom |
                     InteractiveFlag.pinchMove,
                 minZoom: 3,
                 maxZoom: 18,
-                center: widget.userPosition != null
-                    ? LatLng(widget.userPosition!.latitude,
-                        widget.userPosition!.longitude)
 
-                    ///Coordinates of Moscow center
-                    : LatLng(55.754617, 37.622554),
+                /// Moscow center if cameraPosition is null
+                center: widget.cameraPosition ?? LatLng(55.754617, 37.622554),
                 zoom: 15,
               ),
               layers: [
@@ -67,6 +81,8 @@ class _MapWidgetState extends State<MapWidget> {
                   urlTemplate:
                       'https://tile2.maps.2gis.com/tiles?x={x}&y={y}&z={z}&v=1&ts=online_hd',
                 ),
+
+                /// Marker for user position
                 MarkerLayerOptions(
                   markers: [
                     if (widget.userPosition != null)
@@ -82,6 +98,26 @@ class _MapWidgetState extends State<MapWidget> {
                             widget.userPosition!.longitude),
                       ),
                   ],
+                ),
+                MarkerClusterLayerOptions(
+                  maxClusterRadius: 70,
+                  size: Size(40, 40),
+                  fitBoundsOptions:
+                      FitBoundsOptions(padding: EdgeInsets.all(50)),
+                  spiderfyCircleRadius: 100,
+                  centerMarkerOnClick: true,
+                  showPolygon: false,
+                  builder: (BuildContext context, List<Marker> markers) {
+                    if (markers == null || markers.isEmpty) {
+                      return const SizedBox();
+                    }
+                    return MapCommentMarkerCluster(
+                      text: markers.length.toString(),
+                    );
+                  },
+                  markers: widget.mapComments.isNotEmpty
+                      ? _getMarkersFromComments(widget.mapComments)
+                      : [],
                 ),
               ],
             ),
@@ -117,22 +153,26 @@ class _MapWidgetState extends State<MapWidget> {
             ],
           ),
         ),
+
+        /// Save map comment button
         Positioned.fill(
           child: Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
               padding: EdgeInsets.all(8.0),
-              child: CommentButton(
-                onTap: () async {
-                  setState(() {
-                    isCommentOpen = true;
-                  });
-                  await Future.delayed(commentFormAnimationDuration);
-                  setState(() {
-                    isCommentShowInner = true;
-                  });
-                },
-              ),
+              child: widget.isCommentSaving
+                  ? LoadingWidget()
+                  : CommentButton(
+                      onTap: () async {
+                        setState(() {
+                          isCommentOpen = true;
+                        });
+                        await Future.delayed(commentFormAnimationDuration);
+                        setState(() {
+                          isCommentShowInner = true;
+                        });
+                      },
+                    ),
             ),
           ),
         ),
@@ -146,6 +186,42 @@ class _MapWidgetState extends State<MapWidget> {
         ),
       ],
     );
+  }
+
+  // void _onPositionChanged(mapPosition, boolValue) {
+  //   print('position on map has changed');
+  //   final LatLng userPosition = LatLng(
+  //       mapPosition.center!.latitude,
+  //       mapPosition.center!.longitude);
+  //   final LatLng cameraPosition = LatLng(
+  //       _mapController.center.latitude,
+  //       _mapController.center.longitude);
+  //   context.read<MapBloc>().add(
+  //     MapPositionChangedEvent(
+  //         userPosition: userPosition,
+  //         cameraPosition: cameraPosition),
+  //   );
+  // }
+  void _onCameraPositionChanged(MapPosition position, bool hasGesture) {
+    final LatLng cameraPosition =
+        LatLng(position.center!.latitude, position.center!.longitude);
+    context.read<MapBloc>().add(
+          MapCameraPositionChangedEvent(cameraPosition: cameraPosition),
+        );
+  }
+
+  List<Marker> _getMarkersFromComments(List<MapComment> mapComments) {
+    final list = mapComments
+        .map(
+          (comment) => Marker(
+            builder: (BuildContext context) => MapCommentMarker(
+              mapComment: comment,
+            ),
+            point: LatLng(comment.latitude, comment.longitude),
+          ),
+        )
+        .toList();
+    return list;
   }
 
   void _onFormApplyTap() {
@@ -172,6 +248,7 @@ class _MapWidgetState extends State<MapWidget> {
       isCommentShowInner = false;
     });
     FocusScope.of(context).unfocus();
+    _commentController.clear();
   }
 
   void _zoomIn() {

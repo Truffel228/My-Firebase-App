@@ -4,13 +4,14 @@ import 'package:fire_base_app/models/user_data/user_data_api/user_data_api.dart'
 
 abstract class DatabaseServiceInterface {
   Future<void> updateUserData(
-      {required String uid, required UserData userData});
-  Future<void> setUserName(String uid, String name);
-  Future<void> setInitialUserData(String uid);
-  Future<UserData> getUserData(String uid);
+      {required String userId, required UserData userData});
+  Future<void> setUserName(String userId, String name);
+  Future<void> setInitialUserData(String userId);
+  Future<UserData> getUserData(String userId);
   Future<UserData> userDataFromApiToModel(UserDataApi userDataApi);
-  Future<UserDataApi> getUserDataApi(String uid);
   Future<void> saveCommentToCollection(MapComment comment);
   Future<void> saveCommentIdToUser(
-      {required String commentUid, required String userId});
+      {required String commentId, required String userId});
+  Future<List<MapComment>> getAllMapComments();
+  Future<void> deleteMapComment(String commentId);
 }

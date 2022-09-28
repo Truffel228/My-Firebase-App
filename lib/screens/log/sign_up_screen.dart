@@ -72,7 +72,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 const SizedBox(height: 40),
                 TextButton(
-                  onPressed: () async {
+                  onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       _authSignUpEmailPassword();
                     }

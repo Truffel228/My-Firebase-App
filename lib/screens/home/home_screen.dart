@@ -8,6 +8,7 @@ import 'package:fire_base_app/shared/widgets/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../shared/logger.dart';
 import 'widgets/widgets.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -54,5 +55,6 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       currentIndex = index;
     });
+    logger.i('On Bottom Nav Bar Item Tap');
   }
 }
