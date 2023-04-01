@@ -136,7 +136,7 @@ class _MapWidgetState extends State<MapWidget> {
         ),
         Positioned(
           right: 10,
-          top: MediaQuery.of(context).size.height / 2,
+          bottom: 20,
           child: Column(
             children: [
               MapButton(

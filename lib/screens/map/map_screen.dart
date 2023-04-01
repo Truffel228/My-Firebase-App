@@ -16,7 +16,6 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-
   late final String userId;
 
   @override
@@ -28,47 +27,52 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<MapBloc,MapState>(
-      listenWhen: (previousState, currentState){
-        return previousState is MapCommentSaving && currentState is MapLoaded;
+    return BlocListener<MapBloc, MapState>(
+      listenWhen: (previousState, currentState) {
+        return (previousState is MapLoaded && previousState.isCommentSaving) &&
+            (currentState is MapLoaded && !previousState.isCommentSaving);
       },
-      listener: (context, state){
+      listener: (context, state) {
         context.read<ProfileBloc>().add(ProfileFetchEvent(userId));
         print('Added Event To Profile Bloc');
       },
-      child: BlocBuilder<MapBloc, MapState>(builder: (context, state) {
-        if (state is MapLoading) {
-          return Center(
-            child: LoadingWidget(),
+      child: BlocBuilder<MapBloc, MapState>(
+        builder: (context, state) {
+          if (state is MapLoading) {
+            return const Center(
+              child: LoadingWidget(),
+            );
+          }
+          // if (state is MapCommentSaving) {
+          //   return MapWidget(
+          //     cameraPosition: state.cameraPosition,
+          //     isCommentSaving: true,
+          //     mapComments: state.mapComments,
+          //     userPosition: state.userPosition,
+          //   );
+          // }
+          if (state is MapLoaded) {
+            print('MapLoaded');
+
+            /// Когда прокидываем MapLoaded в очередной раз после того как изменилась
+            /// позиция юзера должен же рисоваться новый виджет и его поля
+            /// bool isCommentOpen = false;
+            /// bool isCommentShowInner = false;
+            /// должны обращаться в false всякий раз когда мы прокидываем MapLoaded стейт
+            /// но поля почему то не обновляются и CommentForm остаётся постоянно открытой
+            /// даже в процессе постройки нового MapWidget
+            return MapWidget(
+              cameraPosition: state.cameraPosition,
+              isCommentSaving: state.isCommentSaving,
+              mapComments: state.mapComments,
+              userPosition: state.userPosition,
+            );
+          }
+          return const Center(
+            child: Text('Error'),
           );
-        }
-        if (state is MapCommentSaving) {
-          return MapWidget(
-            cameraPosition: state.cameraPosition,
-            isCommentSaving: true,
-            mapComments: state.mapComments,
-            userPosition: state.userPosition,
-          );
-        }
-        if (state is MapLoaded) {
-          print('MapLoaded');
-          /// Когда прокидываем MapLoaded в очередной раз после того как изменилась
-          /// позиция юзера должен же рисоваться новый виджет и его поля
-          /// bool isCommentOpen = false;
-          /// bool isCommentShowInner = false;
-          /// должны обращаться в false всякий раз когда мы прокидываем MapLoaded стейт
-          /// но поля почему то не обновляются и CommentForm остаётся постоянно открытой
-          /// даже в процессе постройки нового MapWidget
-          return MapWidget(
-            cameraPosition: state.cameraPosition,
-            mapComments: state.mapComments,
-            userPosition: state.userPosition,
-          );
-        }
-        return Center(
-          child: Text('Error'),
-        );
-      },),
+        },
+      ),
     );
   }
 }

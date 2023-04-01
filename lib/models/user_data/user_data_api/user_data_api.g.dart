@@ -9,9 +9,10 @@ part of 'user_data_api.dart';
 UserDataApi _$UserDataApiFromJson(Map<String, dynamic> json) => UserDataApi(
       name: json['name'] as String,
       age: json['age'] as int,
-      mapCommentIds: (json['mapCommentIds'] as List<dynamic>)
-          .map((e) => e as String)
-          .toList(),
+      mapCommentIds: (json['mapCommentIds'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
     );
 
 Map<String, dynamic> _$UserDataApiToJson(UserDataApi instance) =>

@@ -18,6 +18,7 @@ class MapSaveCommentEvent extends MapEvent {
     required this.mapCommentUserId,
   });
   final String mapCommentContent;
+  //TODO: Убрать lat long
   final double mapCommentLatitude;
   final double mapCommentLongitude;
   final String mapCommentUserId;
