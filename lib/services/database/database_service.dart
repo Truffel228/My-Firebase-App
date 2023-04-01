@@ -3,9 +3,10 @@ import 'package:fire_base_app/models/map_comment/map_comment.dart';
 import 'package:fire_base_app/models/user_data/user_data/user_data.dart';
 import 'package:fire_base_app/models/user_data/user_data_api/user_data_api.dart';
 import 'package:fire_base_app/services/database/database_service_interface.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 class DatabaseService extends DatabaseServiceInterface {
-  /// Collections references
+  /// Collections references  
   final CollectionReference usersCollection =
       FirebaseFirestore.instance.collection('users');
   final CollectionReference mapCommentsCollection =
