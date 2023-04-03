@@ -1,4 +1,4 @@
-import 'package:fire_base_app/models/user_data/user_data/user_data.dart';
+import 'package:fire_base_app/models/user_model/user_model/user_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'map_comment.g.dart';

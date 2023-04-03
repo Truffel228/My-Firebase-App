@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:fire_base_app/models/map_comment/map_comment.dart';
-import 'package:fire_base_app/models/user_data/user_data/user_data.dart';
+import 'package:fire_base_app/models/user_model/user_model/user_model.dart';
 import 'package:fire_base_app/services/database/database_service_interface.dart';
 import 'package:meta/meta.dart';
 
@@ -20,8 +20,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   }
   void _onProfileFetchEvent(
       ProfileFetchEvent event, Emitter<ProfileState> emit) async {
-    emit(ProfileLoading());
-    print('Profile Fetch Event in Profile Bloc');
+    final currentState = state;
+    if (currentState is! ProfileLoaded) {
+      emit(ProfileLoading());
+    }
+
     final userData = await _databaseService.getUserData(event.uuid);
     emit(ProfileLoaded(userData: userData));
   }
@@ -58,13 +61,12 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   void _onProfileSaveAfterDeleteCommentEvent(
       ProfileSaveAfterDeleteCommentEvent event,
       Emitter<ProfileState> emit) async {
-    try{
+    try {
       emit(ProfileSaving(userData: event.userData));
-      await _databaseService.updateUserData(userId: event.userId, userData: event.userData);
+      await _databaseService.updateUserData(
+          userId: event.userId, userData: event.userData);
       await _databaseService.deleteMapComment(event.deletedCommentId);
       print('dfafadf');
-    } catch(e){
-
-    }
+    } catch (e) {}
   }
 }

@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:fire_base_app/models/user_data/user_data/user_data.dart';
+import 'package:fire_base_app/models/user_model/user_model/user_model.dart';
 import 'package:fire_base_app/services/database/database_service_interface.dart';
 
 part 'map_comment_screen_event.dart';

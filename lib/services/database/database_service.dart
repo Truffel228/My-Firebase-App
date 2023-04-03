@@ -1,43 +1,50 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fire_base_app/models/map_comment/map_comment.dart';
-import 'package:fire_base_app/models/user_data/user_data/user_data.dart';
-import 'package:fire_base_app/models/user_data/user_data_api/user_data_api.dart';
+import 'package:fire_base_app/models/user_model/user_model/user_model.dart';
+import 'package:fire_base_app/models/user_model/user_model_api/user_model_api.dart';
 import 'package:fire_base_app/services/database/database_service_interface.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
 
 class DatabaseService extends DatabaseServiceInterface {
-  /// Collections references  
+  /// Collections references
   final CollectionReference usersCollection =
       FirebaseFirestore.instance.collection('users');
   final CollectionReference mapCommentsCollection =
       FirebaseFirestore.instance.collection('mapComments');
+  final storage = FirebaseStorage.instance;
 
   @override
   Future<void> updateUserData(
-      {required String userId, required UserData userData}) async {
+      {required String userId, required UserModel userData}) async {
     final userDataApi = userData.toApi();
     return await usersCollection.doc(userId).set(userDataApi.toJson());
   }
 
   @override
-  Future<UserData> getUserData(String uid) async {
+  Future<UserModel> getUserData(String uid) async {
     final userDataApi = await _getUserDataApi(uid);
     final userData = await userDataFromApiToModel(userDataApi);
     return userData;
   }
 
-  Future<UserDataApi> _getUserDataApi(String uid) async {
+  Future<UserModelApi> _getUserDataApi(String uid) async {
     final user = await usersCollection.doc(uid).get();
     final userApiMap = user.data() as Map<String, dynamic>;
     //TODO: Убрать
-    final userDataApi = UserDataApi.fromJson(userApiMap);
+    final userDataApi = UserModelApi.fromJson(userApiMap);
     return userDataApi;
   }
 
   @override
   Future<void> setInitialUserData(String uid) async {
-    final initialUserData =
-        UserData(name: 'Username', age: 18, mapComments: []);
+    final initialUserData = UserModel(
+      name: 'Username',
+      age: 18,
+      mapComments: [],
+    );
     //TODO: Доделать
     updateUserData(userId: uid, userData: initialUserData);
   }
@@ -59,12 +66,12 @@ class DatabaseService extends DatabaseServiceInterface {
   }
 
   Future<List<String>> _getUserCommentIds(String userId) async {
-    final UserDataApi userDataApi = await _getUserDataApi(userId);
+    final UserModelApi userDataApi = await _getUserDataApi(userId);
     return userDataApi.mapCommentIds;
   }
 
   @override
-  Future<UserData> userDataFromApiToModel(UserDataApi userDataApi) async {
+  Future<UserModel> userDataFromApiToModel(UserModelApi userDataApi) async {
     final mapCommentIds = userDataApi.mapCommentIds;
     final List<MapComment> mapComments = [];
     for (final commentId in mapCommentIds) {
@@ -72,8 +79,21 @@ class DatabaseService extends DatabaseServiceInterface {
       final mapComment = mapCommentData.data() as Map<String, dynamic>;
       mapComments.add(MapComment.fromJson(mapComment));
     }
-    return UserData(
-        name: userDataApi.name, age: userDataApi.age, mapComments: mapComments);
+    String profileImageUrl = '';
+    try {
+      profileImageUrl = await storage
+          .ref('profile_image/${userDataApi.profileImage}')
+          .getDownloadURL();
+    } catch (e) {
+      print(e);
+    }
+
+    return UserModel(
+      name: userDataApi.name,
+      age: userDataApi.age,
+      mapComments: mapComments,
+      profileImageUrl: profileImageUrl,
+    );
   }
 
   @override
@@ -104,5 +124,32 @@ class DatabaseService extends DatabaseServiceInterface {
     } catch (e) {
       throw Exception(e);
     }
+  }
+
+  @override
+  Future<void> setUserPhoto(String uid, XFile file) async {
+    try {
+      final fileExt = file.name.split('.').last;
+      final fileName = 'profile_image_$uid.$fileExt';
+      final fileToUpload = File(file.path);
+
+      await storage.ref('profile_image/$fileName').putFile(fileToUpload);
+
+      await usersCollection.doc(uid).update(
+        {'profile_image': fileName},
+      );
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  @override
+  Future<void> deleteUserPhoto(String uid) async {
+    final userDoc = await usersCollection.doc(uid).get();
+    final userData = userDoc.data();
+    final userModelApi =
+        UserModelApi.fromJson(userData as Map<String, dynamic>);
+    await storage.ref('profile_image/${userModelApi.profileImage}').delete();
+    await usersCollection.doc(uid).update({'profile_image': ''});
   }
 }

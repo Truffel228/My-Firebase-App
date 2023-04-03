@@ -1,28 +1,39 @@
 import 'package:flutter/material.dart';
 
 final TextTheme lightTextTheme = TextTheme(
-  bodyText1: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+  bodyMedium: TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w500,
+    color: whiteColor,
+  ),
+  bodySmall: TextStyle(
+    fontSize: 12,
+    fontWeight: FontWeight.w500,
+    color: whiteColor,
+  ),
 );
 
 final ThemeData lightTheme = ThemeData(
   splashColor: transparentColor,
   highlightColor: transparentColor,
   appBarTheme: AppBarTheme(
-      backgroundColor: stylePurpleColor, elevation: 0, centerTitle: true),
-  primaryColor: stylePurpleColor,
-  errorColor: styleDarkRedColor,
+      backgroundColor: purpleColor, elevation: 0, centerTitle: true),
+  primaryColor: purpleColor,
+  errorColor: darkRedColor,
   textTheme: lightTextTheme,
   textSelectionTheme: TextSelectionThemeData(
-    cursorColor: styleLightPurpleColor,
-    selectionHandleColor: styleLightPurpleColor,
-    selectionColor: stylePurpleColor.withOpacity(0.5),
+    cursorColor: lightPurpleColor,
+    selectionHandleColor: lightPurpleColor,
+    selectionColor: purpleColor.withOpacity(0.5),
   ),
 );
 
-const Color stylePurpleColor = Color(0xFF7E0080);
-const Color styleLightPurpleColor = Color(0xFF9B51B4);
-const Color stylePinkColor = Color(0xFFDF6FA0);
-const Color styleRedColor = Color(0xFFEF224B);
-const Color styleDarkRedColor = Color(0xFFC20232);
-const Color styleGreenColor = Color(0xFF38B64A);
+const Color purpleColor = Color(0xFF7E0080);
+const Color lightPurpleColor = Color(0xFF9B51B4);
+const Color pinkColor = Color(0xFFDF6FA0);
+const Color redColor = Color(0xFFEF224B);
+const Color darkRedColor = Color(0xFFC20232);
+const Color greenColor = Color(0xFF38B64A);
+const Color greyColor = Color(0xFFA6A6A6);
 const Color transparentColor = Colors.transparent;
+const Color whiteColor = Colors.white;

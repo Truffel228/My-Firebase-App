@@ -1,6 +1,6 @@
 import 'package:fire_base_app/screens/map/bloc/map_bloc.dart';
 import 'package:fire_base_app/screens/map_comment/bloc/map_comment_screen_bloc.dart';
-import 'package:fire_base_app/screens/profile/bloc/profile_bloc.dart';
+import 'package:fire_base_app/screens/profile/bloc/profile/profile_bloc.dart';
 import 'package:fire_base_app/services/auth/auth_service_interface.dart';
 import 'package:fire_base_app/services/database/database_service_interface.dart';
 import 'package:fire_base_app/services/geolocation/geolocation_service_interface.dart';

@@ -63,7 +63,7 @@ class _CommentFormState extends State<CommentForm> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       AppButton(
-                        color: styleDarkRedColor,
+                        color: darkRedColor,
                         onPressed: widget.onCancelTap,
                         child: Text('Cancel'),
                       ),
@@ -73,7 +73,7 @@ class _CommentFormState extends State<CommentForm> {
                             widget.onApplyTap();
                           }
                         },
-                        color: styleGreenColor,
+                        color: greenColor,
                         child: Text('Apply'),
                       ),
                     ],

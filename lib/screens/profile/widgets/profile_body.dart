@@ -1,6 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fire_base_app/models/app_user/app_user.dart';
 import 'package:fire_base_app/models/map_comment/map_comment.dart';
-import 'package:fire_base_app/models/user_data/user_data/user_data.dart';
+import 'package:fire_base_app/models/user_model/user_model/user_model.dart';
+import 'package:fire_base_app/screens/profile/widgets/profile_avatar.dart';
+import 'package:fire_base_app/screens/profile/widgets/profile_image_bottom_sheet.dart';
 import 'package:fire_base_app/shared/style.dart';
 import 'package:fire_base_app/shared/widgets/map_comment_list_item.dart';
 import 'package:fire_base_app/shared/widgets/app_button.dart';
@@ -20,13 +23,19 @@ class ProfileBody extends StatefulWidget {
     required this.nameController,
     required this.ageController,
     required this.onCommentDelete,
+    required this.onPickGalleryTap,
+    required this.onTakePhotoTap,
+    required this.onDeletePhotoTap,
   }) : super(key: key);
-  final UserData userData;
+  final UserModel userData;
   final bool isSaving;
   final Function(List<MapComment>) onSave;
   final TextEditingController nameController;
   final TextEditingController ageController;
   final Function(List<MapComment>, String) onCommentDelete;
+  final VoidCallback onPickGalleryTap;
+  final VoidCallback onTakePhotoTap;
+  final VoidCallback onDeletePhotoTap;
 
   @override
   _ProfileBodyState createState() => _ProfileBodyState();
@@ -53,8 +62,23 @@ class _ProfileBodyState extends State<ProfileBody> {
         mainAxisSize: MainAxisSize.min,
         children: [
           const SizedBox(height: 20),
-          CircleAvatar(
-            radius: MediaQuery.of(context).size.width * 0.2,
+          InkWell(
+            onTap: () => showModalBottomSheet(
+              context: context,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(16),
+                ),
+              ),
+              builder: (context) => ProfileImageBottomSheet(
+                onPickGalleryTap: widget.onPickGalleryTap,
+                onTakePhotoTap: widget.onTakePhotoTap,
+                onDeletePhotoTap: widget.onDeletePhotoTap,
+              ),
+            ),
+            child: ProfileAvatar(
+              avatarUrl: widget.userData.profileImageUrl ?? '',
+            ),
           ),
           const SizedBox(height: 20),
           Row(
@@ -82,7 +106,10 @@ class _ProfileBodyState extends State<ProfileBody> {
               ? const LoadingWidget()
               : AppButton(
                   onPressed: _onSave,
-                  child: Text('Save'),
+                  child: Text(
+                    'Save',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
                 ),
           const SizedBox(height: 20),
           mapComments.isNotEmpty
@@ -97,7 +124,7 @@ class _ProfileBodyState extends State<ProfileBody> {
                             onPressed: (_) =>
                                 _onCommentDelete(index, mapComments[index].id),
                             icon: FontAwesomeIcons.trash,
-                            backgroundColor: styleDarkRedColor,
+                            backgroundColor: darkRedColor,
                           ),
                         ],
                       ),

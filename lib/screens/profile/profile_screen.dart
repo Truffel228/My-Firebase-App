@@ -1,7 +1,11 @@
 import 'package:fire_base_app/models/app_user/app_user.dart';
 import 'package:fire_base_app/models/map_comment/map_comment.dart';
-import 'package:fire_base_app/models/user_data/user_data/user_data.dart';
-import 'package:fire_base_app/screens/profile/bloc/profile_bloc.dart';
+import 'package:fire_base_app/models/user_model/user_model/user_model.dart';
+import 'package:fire_base_app/screens/profile/bloc/profile/profile_bloc.dart';
+import 'package:fire_base_app/screens/profile/bloc/profile_image/profile_image_bloc.dart';
+import 'package:fire_base_app/services/database/database_service.dart';
+import 'package:fire_base_app/services/database/database_service_interface.dart';
+import 'package:fire_base_app/shared/locator.dart';
 import 'package:fire_base_app/shared/widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,6 +23,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   late final ProfileBloc _bloc;
   late final String uid;
+  late final ProfileImageBloc _profileImageBloc;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
 
@@ -27,74 +32,99 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     uid = Provider.of<AppUser?>(context, listen: false)!.uid;
     _bloc = context.read<ProfileBloc>()..add(ProfileFetchEvent(uid));
+    _profileImageBloc = ProfileImageBloc(
+      databaseService: locator<DatabaseServiceInterface>(),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<ProfileBloc, ProfileState>(
+    return BlocListener<ProfileImageBloc, ProfileImageState>(
+      bloc: _profileImageBloc,
       listener: (context, state) {
-        if (state is ProfileError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-            ),
-          );
-        }
-        if (state is ProfileLoaded && state.message != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message!),
-            ),
-          );
+        if (state is ProfileImageNoCameraAccess) {}
+        if (state is ProfileImageNoGalleryAccess) {}
+        //TODO: success loas
+        // no access
+        // success delete
+        if (state is ProfileImageLoadSuccess) {
+          _bloc.add(ProfileFetchEvent(uid));
         }
       },
-      builder: (context, state) {
-        if (state is ProfileLoaded) {
-          _nameController.text = state.userData.name;
-          _ageController.text = state.userData.age.toString();
-          print('LOADED');
-          return ProfileBody(
-            userData: state.userData,
-            isSaving: false,
-            onSave: _onSave,
-            nameController: _nameController,
-            ageController: _ageController,
-            onCommentDelete: _onCommentDelete,
-          );
-        }
-        if (state is ProfileError) {
-          _nameController.text = state.userData.name;
-          _ageController.text = state.userData.age.toString();
-          return ProfileBody(
-            userData: state.userData,
-            isSaving: false,
-            onSave: _onSave,
-            nameController: _nameController,
-            ageController: _ageController,
-            onCommentDelete: _onCommentDelete,
-          );
-        }
-        if (state is ProfileSaving) {
-          _nameController.text = state.userData.name;
-          _ageController.text = state.userData.age.toString();
-          return ProfileBody(
-            userData: state.userData,
-            isSaving: true,
-            onSave: _onSave,
-            nameController: _nameController,
-            ageController: _ageController,
-            onCommentDelete: _onCommentDelete,
-          );
-        }
-        if (state is ProfileLoading) {
+      child: BlocConsumer<ProfileBloc, ProfileState>(
+        listener: (context, state) {
+          if (state is ProfileError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+              ),
+            );
+          }
+          if (state is ProfileLoaded && state.message != null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message!),
+              ),
+            );
+          }
+        },
+        builder: (context, state) {
+          if (state is ProfileLoaded) {
+            _nameController.text = state.userData.name;
+            _ageController.text = state.userData.age.toString();
+            print('LOADED');
+            return ProfileBody(
+              onPickGalleryTap: _onPickGalleryTap,
+              onTakePhotoTap: _onTakePhotoTap,
+              onDeletePhotoTap: _onDeletePhotoTap,
+              userData: state.userData,
+              isSaving: false,
+              onSave: _onSave,
+              nameController: _nameController,
+              ageController: _ageController,
+              onCommentDelete: _onCommentDelete,
+            );
+          }
+          if (state is ProfileError) {
+            _nameController.text = state.userData.name;
+            _ageController.text = state.userData.age.toString();
+            return ProfileBody(
+              onPickGalleryTap: _onPickGalleryTap,
+              onTakePhotoTap: _onTakePhotoTap,
+              onDeletePhotoTap: _onDeletePhotoTap,
+              userData: state.userData,
+              isSaving: false,
+              onSave: _onSave,
+              nameController: _nameController,
+              ageController: _ageController,
+              onCommentDelete: _onCommentDelete,
+            );
+          }
+          if (state is ProfileSaving) {
+            _nameController.text = state.userData.name;
+            _ageController.text = state.userData.age.toString();
+            return ProfileBody(
+              onPickGalleryTap: _onPickGalleryTap,
+              onTakePhotoTap: _onTakePhotoTap,
+              onDeletePhotoTap: _onDeletePhotoTap,
+              userData: state.userData,
+              isSaving: true,
+              onSave: _onSave,
+              nameController: _nameController,
+              ageController: _ageController,
+              onCommentDelete: _onCommentDelete,
+            );
+          }
+          if (state is ProfileLoading) {
+            return const Center(
+              child: LoadingWidget(),
+            );
+          }
           return const Center(
-            child: LoadingWidget(),
+            child: Text('Something went wrong'),
           );
-        }
-        return const Center(
-          child: Text('Something went wrong'),
-        );
-      },
+        },
+      ),
     );
   }
 
@@ -102,7 +132,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _bloc.add(
       ProfileSaveEvent(
         userId: uid,
-        userData: UserData(
+        userData: UserModel(
           mapComments: mapComments,
           name: _nameController.text,
           age: int.parse(_ageController.text),
@@ -116,7 +146,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ProfileSaveAfterDeleteCommentEvent(
         userId: uid,
         deletedCommentId: commentId,
-        userData: UserData(
+        userData: UserModel(
           mapComments: mapComments,
           name: _nameController.text,
           age: int.parse(_ageController.text),
@@ -124,4 +154,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
+
+  void _onPickGalleryTap() =>
+      _profileImageBloc.add(ProfileImagePickGallery(uid));
+
+  void _onTakePhotoTap() => _profileImageBloc.add(ProfileImageTakePhoto(uid));
+
+  void _onDeletePhotoTap() =>
+      _profileImageBloc.add(ProfileImageDeletePhoto(uid));
 }

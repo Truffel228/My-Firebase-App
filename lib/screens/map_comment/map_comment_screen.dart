@@ -1,4 +1,4 @@
-import 'package:fire_base_app/models/user_data/user_data/user_data.dart';
+import 'package:fire_base_app/models/user_model/user_model/user_model.dart';
 import 'package:fire_base_app/screens/map_comment/bloc/map_comment_screen_bloc.dart';
 import 'package:fire_base_app/shared/router.dart';
 import 'package:fire_base_app/shared/widgets/app_text_field.dart';
@@ -19,7 +19,6 @@ class MapCommentScreen extends StatefulWidget {
 }
 
 class _MapCommentScreenState extends State<MapCommentScreen> {
-
   @override
   void initState() {
     super.initState();
@@ -79,6 +78,6 @@ class _MapCommentScreenState extends State<MapCommentScreen> {
     );
   }
 
-  void _openUserProfileViewScreen(UserData userData) =>
+  void _openUserProfileViewScreen(UserModel userData) =>
       Navigator.pushNamed(context, Routes.userProfileView, arguments: userData);
 }

@@ -9,7 +9,7 @@ class ProfileLoading extends ProfileState {
 }
 
 class ProfileLoaded extends ProfileState {
-  final UserData userData;
+  final UserModel userData;
   final String? message;
   ProfileLoaded({required this.userData, this.message});
 
@@ -18,7 +18,7 @@ class ProfileLoaded extends ProfileState {
 }
 
 class ProfileSaving extends ProfileState {
-  final UserData userData;
+  final UserModel userData;
   ProfileSaving({required this.userData});
 
   @override
@@ -30,10 +30,10 @@ class ProfileError extends ProfileState {
     required this.userData,
     required this.message,
   });
-  final UserData userData;
+  final UserModel userData;
   final String message;
 
   @override
   // TODO: implement props
-  List<Object?> get props => [userData,message];
+  List<Object?> get props => [userData, message];
 }

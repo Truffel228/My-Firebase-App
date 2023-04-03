@@ -1,19 +1,24 @@
 import 'package:fire_base_app/models/map_comment/map_comment.dart';
-import 'package:fire_base_app/models/user_data/user_data_api/user_data_api.dart';
-import 'package:json_annotation/json_annotation.dart';
+import 'package:fire_base_app/models/user_model/user_model_api/user_model_api.dart';
 
-@JsonSerializable()
-class UserData {
-  UserData({required this.name, required this.age, required this.mapComments});
+class UserModel {
+  UserModel({
+    required this.name,
+    required this.age,
+    required this.mapComments,
+    this.profileImageUrl,
+  });
 
   final String name;
   final int age;
   final List<MapComment> mapComments;
+  final String? profileImageUrl;
 
-  UserDataApi toApi() => UserDataApi(
-      name: name,
-      age: age,
-      mapCommentIds: mapComments.map((mapComment) => mapComment.id).toList());
+  UserModelApi toApi() => UserModelApi(
+        name: name,
+        age: age,
+        mapCommentIds: mapComments.map((mapComment) => mapComment.id).toList(),
+      );
 
   //TODO: Пытался сделать перевод из API в модель Entity, но сделал это в DatabaseService потому что такой метод должен быть асинхронным
   // factory UserData.fromApi(UserDataApi userDataApi){

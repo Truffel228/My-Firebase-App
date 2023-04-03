@@ -13,7 +13,7 @@ class ProfileFetchEvent extends ProfileEvent {
 
 class ProfileSaveEvent extends ProfileEvent {
   ProfileSaveEvent({required this.userData, required this.userId});
-  final UserData userData;
+  final UserModel userData;
   final String userId;
 
   @override
@@ -24,7 +24,7 @@ class ProfileSaveAfterDeleteCommentEvent extends ProfileSaveEvent {
   ProfileSaveAfterDeleteCommentEvent({
     required String userId,
     required this.deletedCommentId,
-    required UserData userData,
+    required UserModel userData,
   }) : super(userData: userData, userId: userId);
   final String deletedCommentId;
 

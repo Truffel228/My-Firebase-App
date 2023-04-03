@@ -11,7 +11,7 @@ class MapCommentScreenLoading extends MapCommentScreenState {
 
 class MapCommentScreenLoaded extends MapCommentScreenState {
   MapCommentScreenLoaded({required this.userData});
-  final UserData userData;
+  final UserModel userData;
   @override
   List<Object?> get props => [userData];
 }

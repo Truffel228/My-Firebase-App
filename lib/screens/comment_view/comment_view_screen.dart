@@ -43,7 +43,7 @@ class CommentViewScreen extends StatelessWidget {
                   Navigator.pop(context);
                 },
                 child: Text('Delete'),
-                color: styleDarkRedColor,
+                color: darkRedColor,
               ),
             ],
           ),

@@ -1,4 +1,4 @@
-import 'package:fire_base_app/models/user_data/user_data/user_data.dart';
+import 'package:fire_base_app/models/user_model/user_model/user_model.dart';
 import 'package:fire_base_app/shared/widgets/map_comment_list_item.dart';
 import 'package:fire_base_app/shared/widgets/app_text_field.dart';
 import 'package:flutter/material.dart';
@@ -8,8 +8,8 @@ class UserProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final UserData userData =
-        ModalRoute.of(context)?.settings.arguments as UserData;
+    final UserModel userData =
+        ModalRoute.of(context)?.settings.arguments as UserModel;
 
     return Scaffold(
       appBar: AppBar(

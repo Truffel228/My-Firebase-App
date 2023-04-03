@@ -1,7 +1,7 @@
 import 'package:fire_base_app/models/app_user/app_user.dart';
 import 'package:fire_base_app/screens/map/bloc/map_bloc.dart';
 import 'package:fire_base_app/screens/map/widgets/map_widget.dart';
-import 'package:fire_base_app/screens/profile/bloc/profile_bloc.dart';
+import 'package:fire_base_app/screens/profile/bloc/profile/profile_bloc.dart';
 import 'package:fire_base_app/shared/widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
