@@ -1,9 +1,12 @@
 part of 'profile_bloc.dart';
 
 @immutable
-abstract class ProfileState extends Equatable {}
+abstract class ProfileState extends Equatable {
+  const ProfileState();
+}
 
 class ProfileLoading extends ProfileState {
+  const ProfileLoading();
   @override
   List<Object?> get props => [];
 }
@@ -11,7 +14,7 @@ class ProfileLoading extends ProfileState {
 class ProfileLoaded extends ProfileState {
   final UserModel userData;
   final String? message;
-  ProfileLoaded({required this.userData, this.message});
+  const ProfileLoaded({required this.userData, this.message});
 
   @override
   List<Object?> get props => [userData, message];
@@ -19,14 +22,20 @@ class ProfileLoaded extends ProfileState {
 
 class ProfileSaving extends ProfileState {
   final UserModel userData;
-  ProfileSaving({required this.userData});
+  const ProfileSaving({required this.userData});
 
   @override
   List<Object?> get props => [userData];
 }
 
+class ProfileCommentDeletedSuccess extends ProfileState {
+  const ProfileCommentDeletedSuccess();
+  @override
+  List<Object?> get props => [];
+}
+
 class ProfileError extends ProfileState {
-  ProfileError({
+  const ProfileError({
     required this.userData,
     required this.message,
   });
@@ -34,6 +43,5 @@ class ProfileError extends ProfileState {
   final String message;
 
   @override
-  // TODO: implement props
   List<Object?> get props => [userData, message];
 }

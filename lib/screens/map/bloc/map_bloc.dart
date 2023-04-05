@@ -83,6 +83,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       //   userPosition: _userPosition,
       // ),
     );
+    await Future.delayed(Duration(seconds: 5));
     final userId = event.mapCommentUserId;
     try {
       //TODO: Create Repository for next logic
@@ -104,6 +105,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
       /// update state with new comment
       final mapComments = await _databaseService.getAllMapComments();
+      emit(MapUpdateUserProfile());
       emit(
         MapLoaded(
           mapComments: mapComments,

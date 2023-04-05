@@ -14,7 +14,7 @@ abstract class DatabaseServiceInterface {
   Future<void> saveCommentIdToUser(
       {required String commentId, required String userId});
   Future<List<MapComment>> getAllMapComments();
-  Future<void> deleteMapComment(String commentId);
+  Future<void> deleteMapComment(String userId, String commentId);
   Future<void> setUserPhoto(String uid, XFile file);
   Future<void> deleteUserPhoto(String uid);
 }

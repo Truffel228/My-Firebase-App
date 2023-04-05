@@ -67,12 +67,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             );
           }
+          if (state is ProfileCommentDeletedSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Comment has been deleted'),
+              ),
+            );
+          }
         },
         builder: (context, state) {
           if (state is ProfileLoaded) {
             _nameController.text = state.userData.name;
             _ageController.text = state.userData.age.toString();
-            print('LOADED');
             return ProfileBody(
               onPickGalleryTap: _onPickGalleryTap,
               onTakePhotoTap: _onTakePhotoTap,
@@ -141,16 +147,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void _onCommentDelete(List<MapComment> mapComments, String commentId) {
+  void _onCommentDelete(String commentId) {
     _bloc.add(
-      ProfileSaveAfterDeleteCommentEvent(
+      ProfileDeleteCommentEvent(
         userId: uid,
         deletedCommentId: commentId,
-        userData: UserModel(
-          mapComments: mapComments,
-          name: _nameController.text,
-          age: int.parse(_ageController.text),
-        ),
       ),
     );
   }

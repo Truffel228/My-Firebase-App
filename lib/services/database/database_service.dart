@@ -76,7 +76,8 @@ class DatabaseService extends DatabaseServiceInterface {
     final List<MapComment> mapComments = [];
     for (final commentId in mapCommentIds) {
       final mapCommentData = await mapCommentsCollection.doc(commentId).get();
-      final mapComment = mapCommentData.data() as Map<String, dynamic>;
+      final mapCommentDataData = mapCommentData.data();
+      final mapComment = mapCommentDataData as Map<String, dynamic>;
       mapComments.add(MapComment.fromJson(mapComment));
     }
     String profileImageUrl = '';
@@ -118,9 +119,16 @@ class DatabaseService extends DatabaseServiceInterface {
   }
 
   @override
-  Future<void> deleteMapComment(String commentId) async {
+  Future<void> deleteMapComment(String userId, String commentId) async {
     try {
       await mapCommentsCollection.doc(commentId).delete();
+      final userDoc = await usersCollection.doc(userId).get();
+      var mapCommentIdList = userDoc.get('mapCommentIds') as List<dynamic>;
+      mapCommentIdList = mapCommentIdList.map((e) => e.toString()).toList();
+      mapCommentIdList.remove(commentId);
+      await usersCollection
+          .doc(userId)
+          .update({'mapCommentIds': mapCommentIdList});
     } catch (e) {
       throw Exception(e);
     }

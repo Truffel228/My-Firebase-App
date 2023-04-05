@@ -1,4 +1,3 @@
-import 'package:fire_base_app/models/user_model/user_model/user_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'map_comment.g.dart';
@@ -11,14 +10,32 @@ class MapComment {
     required this.latitude,
     required this.longitude,
     required this.id,
+    this.category = Category.other,
   });
+
   final String comment;
   final double latitude;
   final double longitude;
   final String userId;
   final String id;
+  final Category category;
 
   factory MapComment.fromJson(Map<String, dynamic> json) =>
       _$MapCommentFromJson(json);
   Map<String, dynamic> toJson() => _$MapCommentToJson(this);
+}
+
+enum Category {
+  @JsonValue('criminal')
+  criminal,
+  @JsonValue('accident')
+  accident,
+  @JsonValue('entertainment')
+  entertainment,
+  @JsonValue('transport')
+  transport,
+  @JsonValue('help')
+  help,
+  @JsonValue('other')
+  other,
 }

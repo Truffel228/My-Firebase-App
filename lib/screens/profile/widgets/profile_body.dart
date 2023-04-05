@@ -32,7 +32,7 @@ class ProfileBody extends StatefulWidget {
   final Function(List<MapComment>) onSave;
   final TextEditingController nameController;
   final TextEditingController ageController;
-  final Function(List<MapComment>, String) onCommentDelete;
+  final Function(String) onCommentDelete;
   final VoidCallback onPickGalleryTap;
   final VoidCallback onTakePhotoTap;
   final VoidCallback onDeletePhotoTap;
@@ -42,13 +42,11 @@ class ProfileBody extends StatefulWidget {
 }
 
 class _ProfileBodyState extends State<ProfileBody> {
-  late final List<MapComment> mapComments;
   late final String userId;
 
   @override
   void initState() {
     super.initState();
-    mapComments = widget.userData.mapComments;
     userId = context.read<AppUser?>()!.uid;
     print('Profile Body init');
   }
@@ -112,17 +110,17 @@ class _ProfileBodyState extends State<ProfileBody> {
                   ),
                 ),
           const SizedBox(height: 20),
-          mapComments.isNotEmpty
+          widget.userData.mapComments.isNotEmpty
               ? Expanded(
                   child: ListView.builder(
-                    itemCount: mapComments.length,
+                    itemCount: widget.userData.mapComments.length,
                     itemBuilder: (context, index) => Slidable(
                       endActionPane: ActionPane(
                         motion: const ScrollMotion(),
                         children: [
                           SlidableAction(
-                            onPressed: (_) =>
-                                _onCommentDelete(index, mapComments[index].id),
+                            onPressed: (_) => widget.onCommentDelete(
+                                widget.userData.mapComments[index].id),
                             icon: FontAwesomeIcons.trash,
                             backgroundColor: darkRedColor,
                           ),
@@ -130,10 +128,10 @@ class _ProfileBodyState extends State<ProfileBody> {
                       ),
                       child: MapCommentListItem(
                         enabled: true,
-                        onItemDelete: () =>
-                            _onCommentDelete(index, mapComments[index].id),
+                        onItemDelete: () => widget.onCommentDelete(
+                            widget.userData.mapComments[index].id),
                         index: index,
-                        mapComment: mapComments[index],
+                        mapComment: widget.userData.mapComments[index],
                       ),
                     ),
                   ),
@@ -149,18 +147,11 @@ class _ProfileBodyState extends State<ProfileBody> {
   }
 
   void _onSave() {
-    widget.onSave(mapComments);
+    widget.onSave(widget.userData.mapComments);
     FocusScope.of(context).requestFocus(FocusNode());
   }
 
-  void _onCommentDelete(int index, String commentId) {
-    setState(() {
-      mapComments.removeAt(index);
-    });
-
-    /// После того как удалили коментарий из списка кидаем ивент на удаление,
-    /// в нём на сервер будет сохранятся новый список коментариев уже без удалённого
-    /// коментария
-    widget.onCommentDelete(mapComments, commentId);
+  void _onCommentDelete(String commentId) {
+    widget.onCommentDelete(commentId);
   }
 }

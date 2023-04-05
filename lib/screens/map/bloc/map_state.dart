@@ -11,6 +11,11 @@ class MapLoading extends MapState {
   List<Object?> get props => [];
 }
 
+class MapUpdateUserProfile extends MapState {
+  @override
+  List<Object?> get props => [];
+}
+
 class MapLoaded extends MapState {
   final LatLng? userPosition;
   final LatLng? cameraPosition;
@@ -25,7 +30,12 @@ class MapLoaded extends MapState {
   });
 
   @override
-  List<Object?> get props => [userPosition, mapComments, cameraPosition];
+  List<Object?> get props => [
+        userPosition,
+        mapComments,
+        cameraPosition,
+        isCommentSaving,
+      ];
 
   MapLoaded copyWith({
     LatLng? userPosition,

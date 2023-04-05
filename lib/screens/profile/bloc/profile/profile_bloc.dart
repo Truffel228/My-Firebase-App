@@ -15,8 +15,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         super(ProfileLoading()) {
     on<ProfileFetchEvent>(_onProfileFetchEvent);
     on<ProfileSaveEvent>(_onProfileSaveEvent);
-    on<ProfileSaveAfterDeleteCommentEvent>(
-        _onProfileSaveAfterDeleteCommentEvent);
+    on<ProfileDeleteCommentEvent>(_onProfileSaveAfterDeleteCommentEvent);
   }
   void _onProfileFetchEvent(
       ProfileFetchEvent event, Emitter<ProfileState> emit) async {
@@ -59,13 +58,26 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   }
 
   void _onProfileSaveAfterDeleteCommentEvent(
-      ProfileSaveAfterDeleteCommentEvent event,
-      Emitter<ProfileState> emit) async {
+      ProfileDeleteCommentEvent event, Emitter<ProfileState> emit) async {
+    final currentState = state;
+    if (currentState is! ProfileLoaded) {
+      return;
+    }
     try {
-      emit(ProfileSaving(userData: event.userData));
-      await _databaseService.updateUserData(
-          userId: event.userId, userData: event.userData);
-      await _databaseService.deleteMapComment(event.deletedCommentId);
+      final newCommentList = currentState.userData.mapComments
+        ..removeWhere((element) => element.id == event.deletedCommentId);
+      final newUserData =
+          currentState.userData.copyWith(mapComments: newCommentList);
+
+      emit(
+        ProfileSaving(userData: newUserData),
+      );
+      await _databaseService.deleteMapComment(
+        event.userId,
+        event.deletedCommentId,
+      );
+      emit(ProfileCommentDeletedSuccess());
+      emit(ProfileLoaded(userData: newUserData));
       print('dfafadf');
     } catch (e) {}
   }

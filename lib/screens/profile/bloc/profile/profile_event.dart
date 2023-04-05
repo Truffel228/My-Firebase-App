@@ -20,14 +20,15 @@ class ProfileSaveEvent extends ProfileEvent {
   List<Object?> get props => [userId, userData];
 }
 
-class ProfileSaveAfterDeleteCommentEvent extends ProfileSaveEvent {
-  ProfileSaveAfterDeleteCommentEvent({
-    required String userId,
+class ProfileDeleteCommentEvent extends ProfileEvent {
+  ProfileDeleteCommentEvent({
+    required this.userId,
     required this.deletedCommentId,
-    required UserModel userData,
-  }) : super(userData: userData, userId: userId);
+  });
+
+  final String userId;
   final String deletedCommentId;
 
   @override
-  List<Object?> get props => [deletedCommentId];
+  List<Object?> get props => [userId, deletedCommentId];
 }

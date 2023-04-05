@@ -12,6 +12,8 @@ MapComment _$MapCommentFromJson(Map<String, dynamic> json) => MapComment(
       latitude: (json['latitude'] as num).toDouble(),
       longitude: (json['longitude'] as num).toDouble(),
       id: json['id'] as String,
+      category: $enumDecodeNullable(_$CategoryEnumMap, json['category']) ??
+          Category.other,
     );
 
 Map<String, dynamic> _$MapCommentToJson(MapComment instance) =>
@@ -21,4 +23,14 @@ Map<String, dynamic> _$MapCommentToJson(MapComment instance) =>
       'longitude': instance.longitude,
       'userId': instance.userId,
       'id': instance.id,
+      'category': _$CategoryEnumMap[instance.category]!,
     };
+
+const _$CategoryEnumMap = {
+  Category.criminal: 'criminal',
+  Category.accident: 'accident',
+  Category.entertainment: 'entertainment',
+  Category.transport: 'transport',
+  Category.help: 'help',
+  Category.other: 'other',
+};
