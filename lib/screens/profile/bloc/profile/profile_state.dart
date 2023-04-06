@@ -28,8 +28,8 @@ class ProfileSaving extends ProfileState {
   List<Object?> get props => [userData];
 }
 
-class ProfileCommentDeletedSuccess extends ProfileState {
-  const ProfileCommentDeletedSuccess();
+class ProfileCommentDeleteSuccess extends ProfileState {
+  const ProfileCommentDeleteSuccess();
   @override
   List<Object?> get props => [];
 }

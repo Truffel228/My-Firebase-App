@@ -1,6 +1,9 @@
+import 'dart:collection';
+
 import 'package:fire_base_app/models/app_user/app_user.dart';
 import 'package:fire_base_app/models/map_comment/map_comment.dart';
 import 'package:fire_base_app/models/user_model/user_model/user_model.dart';
+import 'package:fire_base_app/screens/map/bloc/map_bloc.dart';
 import 'package:fire_base_app/screens/profile/bloc/profile/profile_bloc.dart';
 import 'package:fire_base_app/screens/profile/bloc/profile_image/profile_image_bloc.dart';
 import 'package:fire_base_app/services/database/database_service.dart';
@@ -67,12 +70,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             );
           }
-          if (state is ProfileCommentDeletedSuccess) {
+          if (state is ProfileCommentDeleteSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text('Comment has been deleted'),
               ),
             );
+            context.read<MapBloc>().add(MapUpdate());
           }
         },
         builder: (context, state) {

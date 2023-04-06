@@ -11,17 +11,19 @@ class MapLoadEvent extends MapEvent {
 }
 
 class MapSaveCommentEvent extends MapEvent {
-  MapSaveCommentEvent({
+  const MapSaveCommentEvent({
     required this.mapCommentContent,
     required this.mapCommentLatitude,
     required this.mapCommentLongitude,
     required this.mapCommentUserId,
+    required this.category,
   });
   final String mapCommentContent;
   //TODO: Убрать lat long
   final double mapCommentLatitude;
   final double mapCommentLongitude;
   final String mapCommentUserId;
+  final Category category;
 
   @override
   List<Object?> get props => [
@@ -30,6 +32,11 @@ class MapSaveCommentEvent extends MapEvent {
         mapCommentLongitude,
         mapCommentUserId
       ];
+}
+
+class MapUpdate extends MapEvent {
+  @override
+  List<Object?> get props => [];
 }
 
 class MapUserPositionChangedEvent extends MapEvent {

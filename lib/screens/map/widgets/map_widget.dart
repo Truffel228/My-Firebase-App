@@ -213,16 +213,15 @@ class _MapWidgetState extends State<MapWidget> {
     return list;
   }
 
-  void _onFormApplyTap() {
+  void _onFormApplyTap(Category category) {
     FocusScope.of(context).unfocus();
-    final commentText = _commentController.text;
-    final commentPoint = _mapController.center;
     context.read<MapBloc>().add(
           MapSaveCommentEvent(
-            mapCommentContent: commentText,
-            mapCommentLatitude: commentPoint.latitude,
-            mapCommentLongitude: commentPoint.longitude,
+            mapCommentContent: _commentController.text,
+            mapCommentLatitude: _mapController.center.latitude,
+            mapCommentLongitude: _mapController.center.longitude,
             mapCommentUserId: appUserUid,
+            category: category,
           ),
         );
     _commentController.clear();

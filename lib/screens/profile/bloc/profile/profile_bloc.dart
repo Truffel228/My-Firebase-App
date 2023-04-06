@@ -76,7 +76,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         event.userId,
         event.deletedCommentId,
       );
-      emit(ProfileCommentDeletedSuccess());
+      emit(ProfileCommentDeleteSuccess());
       emit(ProfileLoaded(userData: newUserData));
       print('dfafadf');
     } catch (e) {}

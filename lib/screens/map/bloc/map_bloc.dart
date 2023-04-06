@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -35,6 +36,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     on<MapUserPositionChangedEvent>(_onMapUserPositionChangedEvent);
 
     on<MapCameraPositionChangedEvent>(_onMapCameraPositionChangedEvent);
+
+    on<MapUpdate>(_onMapUpdate);
 
     /// Подписываемся на стрим изменения позиции юзера и прокидываем евент
     _positionSubscription = _geoService.onPositionChanged().listen((latLng) {
@@ -83,24 +86,29 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       //   userPosition: _userPosition,
       // ),
     );
-    await Future.delayed(Duration(seconds: 5));
     final userId = event.mapCommentUserId;
     try {
       //TODO: Create Repository for next logic
       const uuid = Uuid();
 
-      /// Unique id based on time
-      final mapCommentId = uuid.v1();
+      final firstPartId = event.mapCommentUserId.substring(0, 5);
+      final secondPartId = Random().nextInt(1000).toString().padLeft(3, '0');
+      final thirdPartId = DateTime.now().toIso8601String();
+      final mapCommentId = '$firstPartId$secondPartId$thirdPartId';
 
       await _databaseService.saveCommentIdToUser(
           userId: userId, commentId: mapCommentId);
 
       final mapComment = MapComment(
-          id: mapCommentId,
-          comment: event.mapCommentContent,
-          latitude: event.mapCommentLatitude,
-          longitude: event.mapCommentLongitude,
-          userId: userId);
+        id: mapCommentId,
+        comment: event.mapCommentContent,
+        latitude: event.mapCommentLatitude,
+        longitude: event.mapCommentLongitude,
+        userId: userId,
+        category: event.category,
+      );
+
+      //TODO: Сделать метод для сохранения коментария в бд
       await _databaseService.saveCommentToCollection(mapComment);
 
       /// update state with new comment
@@ -142,5 +150,19 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   Future<void> close() {
     _positionSubscription.cancel();
     return super.close();
+  }
+
+  FutureOr<void> _onMapUpdate(
+    MapUpdate event,
+    Emitter<MapState> emit,
+  ) async {
+    final currentState = state;
+    if (currentState is! MapLoaded) {
+      return;
+    }
+
+    final mapComments = await _databaseService.getAllMapComments();
+
+    emit(currentState.copyWith(mapComments: mapComments));
   }
 }
