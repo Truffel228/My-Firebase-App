@@ -15,6 +15,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 
 const Duration commentFormAnimationDuration = Duration(milliseconds: 500);
@@ -27,10 +28,10 @@ class MapWidget extends StatefulWidget {
       this.isCommentSaving = false,
       required this.cameraPosition})
       : super(key: key);
-  final LatLng? userPosition;
+  final Position? userPosition;
   final List<MapComment> mapComments;
   final bool isCommentSaving;
-  final LatLng? cameraPosition;
+  final Position? cameraPosition;
 
   @override
   State<MapWidget> createState() => _MapWidgetState();
@@ -72,7 +73,12 @@ class _MapWidgetState extends State<MapWidget> {
               maxZoom: 18,
 
               /// Moscow center if cameraPosition is null
-              center: widget.cameraPosition ?? LatLng(55.754617, 37.622554),
+              center: widget.cameraPosition != null
+                  ? LatLng(
+                      widget.cameraPosition!.latitude,
+                      widget.cameraPosition!.longitude,
+                    )
+                  : LatLng(55.754617, 37.622554),
               zoom: 15,
             ),
             layers: [
@@ -192,10 +198,18 @@ class _MapWidgetState extends State<MapWidget> {
   //   );
   // }
   void _onCameraPositionChanged(MapPosition position, bool hasGesture) {
-    final LatLng cameraPosition =
-        LatLng(position.center!.latitude, position.center!.longitude);
+    final cameraPosition = Position(
+      latitude: position.center!.latitude,
+      longitude: position.center!.longitude,
+      accuracy: 0,
+      altitude: 0,
+      heading: 0,
+      speed: 0,
+      speedAccuracy: 0,
+      timestamp: null,
+    );
     context.read<MapBloc>().add(
-          MapCameraPositionChangedEvent(cameraPosition: cameraPosition),
+          MapCameraPositionChangedEvent(cameraPosition),
         );
   }
 
@@ -248,7 +262,13 @@ class _MapWidgetState extends State<MapWidget> {
 
   void _focusOnUser() {
     if (widget.userPosition != null) {
-      _mapController.move(widget.userPosition!, _mapController.zoom);
+      _mapController.move(
+        LatLng(
+          widget.userPosition!.latitude,
+          widget.userPosition!.longitude,
+        ),
+        _mapController.zoom,
+      );
     }
   }
 

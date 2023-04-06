@@ -1,37 +1,41 @@
+import 'package:fire_base_app/shared/style.dart';
 import 'package:flutter/material.dart';
 
 class AppButton extends StatelessWidget {
-  const AppButton({Key? key, this.onPressed, this.child, this.color})
-      : super(key: key);
+  const AppButton({
+    Key? key,
+    this.title,
+    this.titleColor,
+    this.titleWidget,
+    this.onTap,
+    this.color,
+  }) : super(key: key);
 
-  final VoidCallback? onPressed;
-  final Widget? child;
+  final VoidCallback? onTap;
+  final String? title;
+  final Color? titleColor;
+  final Widget? titleWidget;
   final Color? color;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return ElevatedButton(
-      onPressed: onPressed,
-      child: child,
-      style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.resolveWith<Color>(
-          // As you said you dont need elevation. I'm returning 0 in both case
-          (Set<MaterialState> states) {
-            if (states.contains(MaterialState.disabled)) {
-              return color ?? theme.primaryColor;
-            }
-            return color ??
-                theme.primaryColor; // Defer to the widget's default.
-          },
-        ),
-        elevation: MaterialStateProperty.resolveWith<double>(
-          (Set<MaterialState> states) {
-            if (states.contains(MaterialState.disabled)) {
-              return 0;
-            }
-            return 0;
-          },
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: title != null
+            ? Text(
+                title!,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: titleColor ?? AppColors.whiteColor,
+                  fontWeight: FontWeight.w500,
+                ),
+              )
+            : titleWidget,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          color: color ?? theme.primaryColor,
         ),
       ),
     );

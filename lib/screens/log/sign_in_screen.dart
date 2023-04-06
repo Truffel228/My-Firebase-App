@@ -39,8 +39,8 @@ class _SignInScreenState extends State<SignInScreen> {
         title: Text('Sign In'),
         actions: [
           AppButton(
-            child: Text('Sign Up'),
-            onPressed: widget.toogleScreen,
+            title: 'Sign Up',
+            onTap: widget.toogleScreen,
           ),
         ],
       ),

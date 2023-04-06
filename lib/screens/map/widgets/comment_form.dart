@@ -42,7 +42,7 @@ class _CommentFormState extends State<CommentForm> {
             vertical: 24,
           ),
           decoration: const BoxDecoration(
-            color: whiteColor,
+            color: AppColors.whiteColor,
             borderRadius: BorderRadius.vertical(
               top: Radius.circular(16),
             ),
@@ -55,7 +55,7 @@ class _CommentFormState extends State<CommentForm> {
                 opacity: _categoryError ? 1 : 0,
                 child: const Text(
                   'Category is needed',
-                  style: TextStyle(color: redColor),
+                  style: TextStyle(color: AppColors.redColor),
                 ),
               ),
               Center(
@@ -93,14 +93,14 @@ class _CommentFormState extends State<CommentForm> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   AppButton(
-                    color: darkRedColor,
-                    onPressed: _onCancelTap,
-                    child: Text('Cancel'),
+                    color: AppColors.darkRedColor,
+                    onTap: _onCancelTap,
+                    title: 'Cancel',
                   ),
                   AppButton(
-                    onPressed: _onApplyTap,
-                    color: greenColor,
-                    child: Text('Apply'),
+                    onTap: _onApplyTap,
+                    color: AppColors.greenColor,
+                    title: 'Apply',
                   ),
                 ],
               ),

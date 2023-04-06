@@ -17,8 +17,8 @@ class MapUpdateUserProfile extends MapState {
 }
 
 class MapLoaded extends MapState {
-  final LatLng? userPosition;
-  final LatLng? cameraPosition;
+  final Position? userPosition;
+  final Position? cameraPosition;
   final List<MapComment> mapComments;
   final bool isCommentSaving;
 
@@ -38,8 +38,8 @@ class MapLoaded extends MapState {
       ];
 
   MapLoaded copyWith({
-    LatLng? userPosition,
-    LatLng? cameraPosition,
+    Position? userPosition,
+    Position? cameraPosition,
     List<MapComment>? mapComments,
     bool? isCommentSaving,
   }) {
@@ -52,16 +52,12 @@ class MapLoaded extends MapState {
   }
 }
 
-// class MapCommentSaving extends MapLoaded {
-//   const MapCommentSaving(
-//       {required LatLng? cameraPosition,
-//       required LatLng? userPosition,
-//       required List<MapComment> mapComments})
-//       : super(
-//             cameraPosition: cameraPosition,
-//             userPosition: userPosition,
-//             mapComments: mapComments);
+class MapGeoServiceDisabled extends MapState {
+  @override
+  List<Object?> get props => [];
+}
 
-//   @override
-//   List<Object?> get props => [mapComments, userPosition, cameraPosition];
-// }
+class MapNoGeoPermission extends MapState {
+  @override
+  List<Object?> get props => [];
+}

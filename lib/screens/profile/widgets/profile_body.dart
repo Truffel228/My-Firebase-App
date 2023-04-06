@@ -53,6 +53,8 @@ class _ProfileBodyState extends State<ProfileBody> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return InkWell(
       onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
       child: Column(
@@ -103,11 +105,8 @@ class _ProfileBodyState extends State<ProfileBody> {
           widget.isSaving
               ? const LoadingWidget()
               : AppButton(
-                  onPressed: _onSave,
-                  child: Text(
-                    'Save',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
+                  onTap: _onSave,
+                  title: 'Save',
                 ),
           const SizedBox(height: 20),
           widget.userData.mapComments.isNotEmpty
@@ -122,7 +121,7 @@ class _ProfileBodyState extends State<ProfileBody> {
                             onPressed: (_) => widget.onCommentDelete(
                                 widget.userData.mapComments[index].id),
                             icon: FontAwesomeIcons.trash,
-                            backgroundColor: darkRedColor,
+                            backgroundColor: AppColors.darkRedColor,
                           ),
                         ],
                       ),
@@ -136,9 +135,12 @@ class _ProfileBodyState extends State<ProfileBody> {
                     ),
                   ),
                 )
-              : const Expanded(
+              : Expanded(
                   child: Center(
-                    child: Text('Your list of comments is empty'),
+                    child: Text(
+                      'Your list of comments is empty',
+                      style: theme.textTheme.bodyMedium,
+                    ),
                   ),
                 ),
         ],

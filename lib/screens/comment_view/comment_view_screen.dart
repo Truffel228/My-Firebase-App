@@ -30,20 +30,18 @@ class CommentViewScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               AppButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text(
-                  'Back',
-                  style: TextStyle(color: theme.primaryColor),
-                ),
+                onTap: () => Navigator.pop(context),
+                title: 'Back',
+                titleColor: theme.primaryColor,
                 color: Colors.transparent,
               ),
               AppButton(
-                onPressed: () {
+                onTap: () {
                   onDelete();
                   Navigator.pop(context);
                 },
-                child: Text('Delete'),
-                color: darkRedColor,
+                title: 'Delete',
+                color: AppColors.darkRedColor,
               ),
             ],
           ),

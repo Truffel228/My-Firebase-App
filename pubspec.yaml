@@ -46,7 +46,7 @@ dependencies:
   flutter_bloc: ^8.0.1
   equatable: ^2.0.3
   flutter_map: ^0.14.0
-  location: ^4.4.0
+  geolocator: ^9.0.2
   uuid: ^3.0.6
   connectivity_plus: ^2.3.0
   logger: ^1.1.0

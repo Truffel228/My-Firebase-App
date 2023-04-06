@@ -35,7 +35,7 @@ class ProfileAvatar extends StatelessWidget {
         height: radius,
         decoration: const BoxDecoration(
           shape: BoxShape.circle,
-          color: greyColor,
+          color: AppColors.greyColor,
         ),
       ),
     );

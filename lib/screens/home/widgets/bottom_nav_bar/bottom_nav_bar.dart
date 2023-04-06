@@ -26,7 +26,7 @@ class BottomNavBar extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [lightPurpleColor, theme.primaryColor],
+                  colors: [AppColors.lightPurpleColor, theme.primaryColor],
                 ),
               ),
             ),

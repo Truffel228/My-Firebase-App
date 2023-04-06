@@ -30,8 +30,8 @@ class ProfileImageBottomSheet extends StatelessWidget {
           ConstrainedBox(
             constraints: const BoxConstraints(minWidth: 130),
             child: AppButton(
-              onPressed: onPickGalleryTap,
-              child: Row(
+              onTap: onPickGalleryTap,
+              titleWidget: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const Icon(
@@ -50,8 +50,8 @@ class ProfileImageBottomSheet extends StatelessWidget {
           ConstrainedBox(
             constraints: const BoxConstraints(minWidth: 130),
             child: AppButton(
-              onPressed: onTakePhotoTap,
-              child: Row(
+              onTap: onTakePhotoTap,
+              titleWidget: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const Icon(

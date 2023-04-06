@@ -4,16 +4,16 @@ import 'package:flutter/services.dart';
 
 final OutlineInputBorder _border = OutlineInputBorder(
   borderRadius: BorderRadius.circular(10.0),
-  borderSide: BorderSide(
-    color: purpleColor,
+  borderSide: const BorderSide(
+    color: AppColors.purpleColor,
     width: 2,
   ),
 );
 
 final OutlineInputBorder _errorBorder = OutlineInputBorder(
   borderRadius: BorderRadius.circular(10.0),
-  borderSide: BorderSide(
-    color: darkRedColor,
+  borderSide: const BorderSide(
+    color: AppColors.darkRedColor,
     width: 2,
   ),
 );
@@ -59,7 +59,8 @@ class AppTextField extends StatelessWidget {
         enabledBorder: _border,
         focusedBorder: _border,
         errorBorder: _errorBorder,
-        errorStyle: TextStyle(fontWeight: FontWeight.bold, color: darkRedColor),
+        errorStyle: TextStyle(
+            fontWeight: FontWeight.bold, color: AppColors.darkRedColor),
         focusedErrorBorder: _errorBorder,
       ),
     );

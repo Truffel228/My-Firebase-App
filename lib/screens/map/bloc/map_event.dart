@@ -5,7 +5,7 @@ abstract class MapEvent extends Equatable {
   const MapEvent();
 }
 
-class MapLoadEvent extends MapEvent {
+class MapInitEvent extends MapEvent {
   @override
   List<Object?> get props => [];
 }
@@ -40,15 +40,15 @@ class MapUpdate extends MapEvent {
 }
 
 class MapUserPositionChangedEvent extends MapEvent {
-  MapUserPositionChangedEvent({required this.userPosition});
-  final LatLng userPosition;
+  const MapUserPositionChangedEvent({required this.userPosition});
+  final Position userPosition;
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [userPosition];
 }
 
 class MapCameraPositionChangedEvent extends MapEvent {
-  MapCameraPositionChangedEvent({required this.cameraPosition});
-  final LatLng cameraPosition;
+  const MapCameraPositionChangedEvent(this.cameraPosition);
+  final Position cameraPosition;
 
   @override
   List<Object?> get props => [cameraPosition];

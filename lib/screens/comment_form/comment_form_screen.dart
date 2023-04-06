@@ -3,7 +3,7 @@ import 'package:fire_base_app/shared/widgets/app_text_field.dart';
 import 'package:flutter/material.dart';
 
 class CommentFormScreen extends StatelessWidget {
-  CommentFormScreen({Key? key}) : super(key: key);
+  const CommentFormScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -33,11 +33,11 @@ class CommentFormScreen extends StatelessWidget {
                     children: const [
                       AppButton(
                         color: Colors.red,
-                        child: Text('Cancel'),
+                        title: 'Cancel',
                       ),
                       AppButton(
                         color: Colors.green,
-                        child: Text('Apply'),
+                        title: 'Apply',
                       ),
                     ],
                   ),

@@ -3,13 +3,10 @@ import 'package:fire_base_app/services/database/database_service_interface.dart'
 import 'package:fire_base_app/shared/consts.dart';
 import 'package:fire_base_app/shared/locator.dart';
 import 'package:fire_base_app/models/app_user/app_user.dart';
-import 'package:fire_base_app/services/auth/auth_service.dart';
-import 'package:fire_base_app/services/database/database_service.dart';
 import 'package:fire_base_app/shared/widgets/app_button.dart';
 import 'package:fire_base_app/shared/widgets/app_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({required this.toogleScreen, Key? key}) : super(key: key);
@@ -21,7 +18,8 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  final DatabaseServiceInterface _database = locator.get<DatabaseServiceInterface>();
+  final DatabaseServiceInterface _database =
+      locator.get<DatabaseServiceInterface>();
   final AuthServiceInterface _auth = locator.get<AuthServiceInterface>();
 
   final TextEditingController _emailController = TextEditingController();
@@ -38,8 +36,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
         centerTitle: true,
         actions: [
           AppButton(
-            child: Text('Sign In'),
-            onPressed: widget.toogleScreen,
+            title: 'Sign In',
+            onTap: widget.toogleScreen,
           ),
         ],
       ),

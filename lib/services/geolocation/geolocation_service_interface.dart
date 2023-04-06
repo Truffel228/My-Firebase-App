@@ -1,6 +1,7 @@
-import 'package:latlong2/latlong.dart';
+import 'package:geolocator/geolocator.dart';
 
-abstract class GeolocationServiceInterface{
-  Future<LatLng?> getPosition();
-  Stream<LatLng?> onPositionChanged();
+abstract class GeolocationServiceInterface {
+  Future<Position?> getPosition();
+  Stream<Position?> onPositionChanged();
+  Stream<ServiceStatus> onGeoserviceStatusChanged();
 }

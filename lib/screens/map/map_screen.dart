@@ -21,7 +21,7 @@ class _MapScreenState extends State<MapScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<MapBloc>().add(MapLoadEvent());
+    context.read<MapBloc>().add(MapInitEvent());
     userId = context.read<AppUser?>()!.uid;
   }
 
@@ -31,6 +31,18 @@ class _MapScreenState extends State<MapScreen> {
       listener: (context, state) {
         if (state is MapUpdateUserProfile) {
           context.read<ProfileBloc>().add(ProfileFetchEvent(userId));
+        }
+        if (state is MapGeoServiceDisabled) {
+          showDialog(
+            context: context,
+            builder: (context) => const GeoServiceDisabledDialog(),
+          );
+        }
+        if (state is MapNoGeoPermission) {
+          showDialog(
+            context: context,
+            builder: (context) => const GeoServiceDisabledDialog(),
+          );
         }
       },
       builder: (context, state) {

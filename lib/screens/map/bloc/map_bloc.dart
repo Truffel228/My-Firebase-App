@@ -5,7 +5,9 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:fire_base_app/models/map_comment/map_comment.dart';
 import 'package:fire_base_app/services/database/database_service_interface.dart';
+import 'package:fire_base_app/services/geolocation/geolocation_service.dart';
 import 'package:fire_base_app/services/geolocation/geolocation_service_interface.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:meta/meta.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:uuid/uuid.dart';
@@ -15,6 +17,7 @@ part 'map_state.dart';
 
 class MapBloc extends Bloc<MapEvent, MapState> {
   late final StreamSubscription _positionSubscription;
+  late final StreamSubscription _geoserviceStatusSubscription;
   // LatLng? _userPosition;
   // LatLng? _cameraPosition;
   // List<MapComment> _mapComments = <MapComment>[];
@@ -27,7 +30,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         _databaseService = databaseService,
         super(MapLoading()) {
     /// Загрузка данных для карты
-    on<MapLoadEvent>(_onMapLoadEvent);
+    on<MapInitEvent>(_onMapInitEvent);
 
     /// Сохранение коментария на карте с экрана карты
     on<MapSaveCommentEvent>(_onMapSaveCommentEvent);
@@ -40,18 +43,40 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     on<MapUpdate>(_onMapUpdate);
 
     /// Подписываемся на стрим изменения позиции юзера и прокидываем евент
-    _positionSubscription = _geoService.onPositionChanged().listen((latLng) {
-      if (latLng == null) {
+    _positionSubscription = _geoService.onPositionChanged().listen((position) {
+      if (position == null) {
         return;
       }
 
-      add(MapUserPositionChangedEvent(userPosition: latLng));
+      add(MapUserPositionChangedEvent(userPosition: position));
+    });
+
+    _geoserviceStatusSubscription =
+        _geoService.onGeoserviceStatusChanged().listen((status) {
+      add(MapInitEvent());
     });
   }
-  void _onMapLoadEvent(MapLoadEvent event, emit) async {
+  void _onMapInitEvent(MapInitEvent event, emit) async {
+    final prevState = state;
+
     emit(MapLoading());
+
     try {
-      final currentPosition = await _geoService.getPosition();
+      Position? currentPosition;
+
+      try {
+        currentPosition = await _geoService.getPosition();
+      } catch (e) {
+        if (e is GeoServiceDisabledException) {
+          emit(MapGeoServiceDisabled());
+          currentPosition = null;
+        }
+
+        if (e is NoLocationPermissionException) {
+          emit(MapNoGeoPermission());
+          currentPosition = null;
+        }
+      }
 
       /// Проверять, если [currentPosition] равна null эмитить MapErrorState
       // _userPosition = currentPosition;
@@ -59,14 +84,19 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       final mapComments = await _databaseService.getAllMapComments();
       emit(
         MapLoaded(
-            cameraPosition: currentPosition,
+            cameraPosition: prevState is MapLoaded
+                ? prevState.cameraPosition
+                : currentPosition,
             userPosition: currentPosition,
             mapComments: mapComments),
       );
     } catch (e) {
       emit(
-        MapLoaded(
-            cameraPosition: null, userPosition: null, mapComments: const []),
+        const MapLoaded(
+          cameraPosition: null,
+          userPosition: null,
+          mapComments: [],
+        ),
       );
     }
   }

@@ -30,13 +30,13 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: Text('Firebase App'),
+        title: Text('Mapews'),
         actions: [
           AppButton(
-            onPressed: () async {
+            onTap: () async {
               _auth.signOut();
             },
-            child: Text('Sign Out'),
+            title: 'Sign Out',
           ),
         ],
       ),
