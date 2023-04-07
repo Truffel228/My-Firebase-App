@@ -7,11 +7,12 @@ part of 'map_comment.dart';
 // **************************************************************************
 
 MapComment _$MapCommentFromJson(Map<String, dynamic> json) => MapComment(
-      userId: json['userId'] as String,
+      userId: json['user_id'] as String,
       comment: json['comment'] as String,
       latitude: (json['latitude'] as num).toDouble(),
       longitude: (json['longitude'] as num).toDouble(),
       id: json['id'] as String,
+      createdTs: json['created_ts'] as int?,
       category: $enumDecodeNullable(_$CategoryEnumMap, json['category']) ??
           Category.other,
     );
@@ -21,9 +22,10 @@ Map<String, dynamic> _$MapCommentToJson(MapComment instance) =>
       'comment': instance.comment,
       'latitude': instance.latitude,
       'longitude': instance.longitude,
-      'userId': instance.userId,
+      'user_id': instance.userId,
       'id': instance.id,
       'category': _$CategoryEnumMap[instance.category]!,
+      'created_ts': instance.createdTs,
     };
 
 const _$CategoryEnumMap = {

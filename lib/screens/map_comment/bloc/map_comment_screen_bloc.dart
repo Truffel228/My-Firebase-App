@@ -23,6 +23,8 @@ class MapCommentScreenBloc
     try {
       final userData = await _databaseService.getUserData(event.userId);
       emit(MapCommentScreenLoaded(userData: userData));
-    } catch (e) {}
+    } catch (e) {
+      print(e);
+    }
   }
 }

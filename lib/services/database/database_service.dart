@@ -57,12 +57,12 @@ class DatabaseService extends DatabaseServiceInterface {
   @override
   Future<void> saveCommentIdToUser(
       {required String commentId, required String userId}) async {
-    final mapCommentIds = await _getUserCommentIds(userId) as List<String>;
+    final mapCommentIds = await _getUserCommentIds(userId);
     mapCommentIds.add(commentId);
     //TODO: Set comment ids to user
     return await usersCollection
         .doc(userId)
-        .update({'mapCommentIds': mapCommentIds});
+        .update({'map_comment_ids': mapCommentIds});
   }
 
   Future<List<String>> _getUserCommentIds(String userId) async {
@@ -77,6 +77,11 @@ class DatabaseService extends DatabaseServiceInterface {
     for (final commentId in mapCommentIds) {
       final mapCommentData = await mapCommentsCollection.doc(commentId).get();
       final mapCommentDataData = mapCommentData.data();
+
+      /// If map comment with id doesn't exists then skip adding this map comment to list
+      if (mapCommentDataData == null) {
+        continue;
+      }
       final mapComment = mapCommentDataData as Map<String, dynamic>;
       mapComments.add(MapComment.fromJson(mapComment));
     }
@@ -123,12 +128,12 @@ class DatabaseService extends DatabaseServiceInterface {
     try {
       await mapCommentsCollection.doc(commentId).delete();
       final userDoc = await usersCollection.doc(userId).get();
-      var mapCommentIdList = userDoc.get('mapCommentIds') as List<dynamic>;
+      var mapCommentIdList = userDoc.get('map_comment_ids') as List<dynamic>;
       mapCommentIdList = mapCommentIdList.map((e) => e.toString()).toList();
       mapCommentIdList.remove(commentId);
       await usersCollection
           .doc(userId)
-          .update({'mapCommentIds': mapCommentIdList});
+          .update({'map_comment_ids': mapCommentIdList});
     } catch (e) {
       throw Exception(e);
     }

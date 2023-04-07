@@ -6,16 +6,18 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 class MapCommentMarker extends StatelessWidget {
   const MapCommentMarker({Key? key, required this.mapComment})
       : super(key: key);
+
   final MapComment mapComment;
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return InkWell(
-      onTap: () => _openMapComment(context, mapComment),
+      onTap: () => _openMapComment(context),
       child: Container(
         width: 25,
         height: 25,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           shape: BoxShape.circle,
           color: Colors.white,
         ),
@@ -28,19 +30,18 @@ class MapCommentMarker extends StatelessWidget {
     );
   }
 
-  void _openMapComment(BuildContext context, MapComment mapComment) {
+  void _openMapComment(BuildContext context) {
     showModalBottomSheet(
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(20),
         ),
       ),
+      isScrollControlled: true,
       context: context,
       builder: (BuildContext context) => MapCommentScreen(
-        comment: mapComment.comment,
-        userId: mapComment.userId,
+        mapComment: mapComment,
       ),
     );
   }
 }
-

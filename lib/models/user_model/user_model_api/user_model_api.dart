@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'user_model_api.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class UserModelApi {
   UserModelApi({
     required this.name,
@@ -14,7 +14,6 @@ class UserModelApi {
   final String name;
   final int age;
   final List<String> mapCommentIds;
-  @JsonKey(name: 'profile_image')
   final String? profileImage;
 
   factory UserModelApi.fromJson(Map<String, dynamic> json) =>

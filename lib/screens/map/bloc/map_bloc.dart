@@ -84,11 +84,12 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       final mapComments = await _databaseService.getAllMapComments();
       emit(
         MapLoaded(
-            cameraPosition: prevState is MapLoaded
-                ? prevState.cameraPosition
-                : currentPosition,
-            userPosition: currentPosition,
-            mapComments: mapComments),
+          cameraPosition: prevState is MapLoaded
+              ? prevState.cameraPosition
+              : currentPosition,
+          userPosition: currentPosition,
+          mapComments: mapComments,
+        ),
       );
     } catch (e) {
       emit(
@@ -129,6 +130,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       await _databaseService.saveCommentIdToUser(
           userId: userId, commentId: mapCommentId);
 
+      final createTimeTs = DateTime.now().millisecondsSinceEpoch;
       final mapComment = MapComment(
         id: mapCommentId,
         comment: event.mapCommentContent,
@@ -136,6 +138,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         longitude: event.mapCommentLongitude,
         userId: userId,
         category: event.category,
+        createdTs: createTimeTs,
       );
 
       //TODO: Сделать метод для сохранения коментария в бд
@@ -151,7 +154,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           cameraPosition: currentState.cameraPosition,
         ),
       );
-    } catch (e) {}
+    } catch (e) {
+      print(e);
+    }
   }
 
   void _onMapUserPositionChangedEvent(MapUserPositionChangedEvent event, emit) {

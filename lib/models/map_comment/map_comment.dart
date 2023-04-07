@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'map_comment.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class MapComment {
-  MapComment({
+  const MapComment({
     required this.userId,
     required this.comment,
     required this.latitude,
     required this.longitude,
     required this.id,
+    this.createdTs,
     this.category = Category.other,
   });
 
@@ -20,6 +22,15 @@ class MapComment {
   final String userId;
   final String id;
   final Category category;
+  final int? createdTs;
+
+  String? get creationTime {
+    if (createdTs == null) {
+      return null;
+    }
+    return DateFormat('yyyy MMMM dd HH:mm')
+        .format(DateTime.fromMillisecondsSinceEpoch(createdTs!));
+  }
 
   factory MapComment.fromJson(Map<String, dynamic> json) =>
       _$MapCommentFromJson(json);
@@ -46,6 +57,7 @@ extension ExtCategory on Category {
     switch (this) {
       case Category.criminal:
         return 'criminal';
+
       case Category.accident:
         return 'accident';
 
