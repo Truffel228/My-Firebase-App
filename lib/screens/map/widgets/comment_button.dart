@@ -17,24 +17,25 @@ class _CommentButtonState extends State<CommentButton> {
     return InkWell(
       onTap: widget.onTap,
       child: ClipRRect(
-        borderRadius: const BorderRadius.all(const Radius.circular(25)),
+        borderRadius: const BorderRadius.all(Radius.circular(100)),
         child: Container(
-          width: 170,
-          height: 50,
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
           decoration: const BoxDecoration(color: Colors.white),
           child: Row(
+            mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
                 FontAwesomeIcons.comment,
                 color: theme.primaryColor,
               ),
-              const SizedBox(width: 5),
+              const SizedBox(width: 6),
               Text(
                 'Leave a comment',
-                style: theme.textTheme.bodyText1!
-                    .copyWith(color: theme.primaryColor),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.primaryColor,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ],
           ),
