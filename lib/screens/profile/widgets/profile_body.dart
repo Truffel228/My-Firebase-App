@@ -63,19 +63,7 @@ class _ProfileBodyState extends State<ProfileBody> {
         children: [
           const SizedBox(height: 20),
           InkWell(
-            onTap: () => showModalBottomSheet(
-              context: context,
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(16),
-                ),
-              ),
-              builder: (context) => ProfileImageBottomSheet(
-                onPickGalleryTap: widget.onPickGalleryTap,
-                onTakePhotoTap: widget.onTakePhotoTap,
-                onDeletePhotoTap: widget.onDeletePhotoTap,
-              ),
-            ),
+            onTap: _onAvatarTap,
             child: ProfileAvatar(
               avatarUrl: widget.userData.profileImageUrl ?? '',
             ),
@@ -153,7 +141,17 @@ class _ProfileBodyState extends State<ProfileBody> {
     FocusScope.of(context).requestFocus(FocusNode());
   }
 
-  void _onCommentDelete(String commentId) {
-    widget.onCommentDelete(commentId);
-  }
+  void _onAvatarTap() => showModalBottomSheet(
+        context: context,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(16),
+          ),
+        ),
+        builder: (context) => ProfileImageBottomSheet(
+          onPickGalleryTap: widget.onPickGalleryTap,
+          onTakePhotoTap: widget.onTakePhotoTap,
+          onDeletePhotoTap: widget.onDeletePhotoTap,
+        ),
+      );
 }
