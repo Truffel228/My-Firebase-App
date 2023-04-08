@@ -61,7 +61,7 @@ class PickFileBottomSheet extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'PHOTO',
+                    'CAMERA',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           fontWeight: FontWeight.w500,
                           color: AppColors.whiteColor,
