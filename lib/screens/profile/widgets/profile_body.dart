@@ -65,7 +65,7 @@ class _ProfileBodyState extends State<ProfileBody> {
           InkWell(
             onTap: _onAvatarTap,
             child: ProfileAvatar(
-              avatarUrl: widget.userData.profileImageUrl ?? '',
+              avatarUrl: widget.userData.profileImageUrl,
             ),
           ),
           const SizedBox(height: 20),
@@ -149,10 +149,10 @@ class _ProfileBodyState extends State<ProfileBody> {
             top: Radius.circular(20),
           ),
         ),
-        builder: (context) => ProfileImageBottomSheet(
-          onPickGalleryTap: widget.onPickGalleryTap,
-          onTakePhotoTap: widget.onTakePhotoTap,
-          onDeletePhotoTap: widget.onDeletePhotoTap,
+        builder: (context) => PickFileBottomSheet(
+          onGalleryTap: widget.onPickGalleryTap,
+          onCameraTap: widget.onTakePhotoTap,
+          onDeleteTap: widget.onDeletePhotoTap,
         ),
       );
 }

@@ -4,6 +4,7 @@ import 'package:fire_base_app/screens/profile/bloc/profile/profile_bloc.dart';
 import 'package:fire_base_app/services/auth/auth_service_interface.dart';
 import 'package:fire_base_app/services/database/database_service_interface.dart';
 import 'package:fire_base_app/services/geolocation/geolocation_service_interface.dart';
+import 'package:fire_base_app/services/image_picker_service.dart';
 import 'package:fire_base_app/shared/app_bloc_observer.dart';
 import 'package:fire_base_app/shared/locator.dart';
 import 'package:fire_base_app/models/app_user/app_user.dart';

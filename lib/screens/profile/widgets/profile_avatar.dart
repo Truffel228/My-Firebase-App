@@ -4,13 +4,25 @@ import 'package:flutter/material.dart';
 
 class ProfileAvatar extends StatelessWidget {
   const ProfileAvatar({Key? key, required this.avatarUrl}) : super(key: key);
-  final String avatarUrl;
+  final String? avatarUrl;
 
   @override
   Widget build(BuildContext context) {
     final radius = MediaQuery.of(context).size.width * 0.4;
+    if (avatarUrl?.isEmpty ?? true) {
+      return Container(
+        width: radius,
+        height: radius,
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          image: DecorationImage(
+              image: AssetImage('assets/empty_profile_image.png'),
+              fit: BoxFit.cover),
+        ),
+      );
+    }
     return CachedNetworkImage(
-      imageUrl: avatarUrl,
+      imageUrl: avatarUrl!,
       imageBuilder: (context, imageProvider) => Container(
         width: radius,
         height: radius,

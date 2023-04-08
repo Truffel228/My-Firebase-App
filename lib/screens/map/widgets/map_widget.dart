@@ -1,14 +1,12 @@
 import 'package:fire_base_app/models/app_user/app_user.dart';
 import 'package:fire_base_app/models/map_comment/map_comment.dart';
+import 'package:fire_base_app/screens/add_map_comment/add_map_comment_screen.dart';
 import 'package:fire_base_app/screens/map/bloc/map_bloc.dart';
 import 'package:fire_base_app/screens/map/widgets/comment_button.dart';
-import 'package:fire_base_app/screens/map/widgets/comment_form.dart';
 import 'package:fire_base_app/screens/map/widgets/map_button.dart';
 import 'package:fire_base_app/screens/map/widgets/map_comment_marker.dart';
 import 'package:fire_base_app/screens/map/widgets/map_comment_marker_cluster.dart';
 import 'package:fire_base_app/shared/style.dart';
-import 'package:fire_base_app/shared/widgets/app_button.dart';
-import 'package:fire_base_app/shared/widgets/app_text_field.dart';
 import 'package:fire_base_app/shared/widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -274,14 +272,15 @@ class _MapWidgetState extends State<MapWidget> {
 
   void _onCommentButtonTap() {
     showModalBottomSheet(
+      backgroundColor: AppColors.whiteColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
-          top: Radius.circular(16),
+          top: Radius.circular(20),
         ),
       ),
       isScrollControlled: true,
       context: context,
-      builder: (context) => CommentForm(
+      builder: (context) => AddMapCommentForm(
         onApplyTap: _onFormApplyTap,
         onCancelTap: _onFormCancelTap,
         controller: _commentController,

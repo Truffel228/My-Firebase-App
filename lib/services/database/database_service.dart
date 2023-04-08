@@ -85,11 +85,13 @@ class DatabaseService extends DatabaseServiceInterface {
       final mapComment = mapCommentDataData as Map<String, dynamic>;
       mapComments.add(MapComment.fromJson(mapComment));
     }
-    String profileImageUrl = '';
+    String? profileImageUrl;
     try {
-      profileImageUrl = await storage
-          .ref('profile_image/${userDataApi.profileImage}')
-          .getDownloadURL();
+      if (userDataApi.profileImage?.isNotEmpty ?? false) {
+        profileImageUrl = await storage
+            .ref('profile_image/${userDataApi.profileImage}')
+            .getDownloadURL();
+      }
     } catch (e) {
       print(e);
     }
@@ -157,12 +159,16 @@ class DatabaseService extends DatabaseServiceInterface {
   }
 
   @override
-  Future<void> deleteUserPhoto(String uid) async {
+  Future<bool> deleteUserPhoto(String uid) async {
     final userDoc = await usersCollection.doc(uid).get();
     final userData = userDoc.data();
     final userModelApi =
         UserModelApi.fromJson(userData as Map<String, dynamic>);
+    if (userModelApi.profileImage?.isEmpty ?? true) {
+      return false;
+    }
     await storage.ref('profile_image/${userModelApi.profileImage}').delete();
-    await usersCollection.doc(uid).update({'profile_image': ''});
+    await usersCollection.doc(uid).update({'profile_image': null});
+    return true;
   }
 }

@@ -8,6 +8,7 @@ import 'package:fire_base_app/screens/profile/bloc/profile/profile_bloc.dart';
 import 'package:fire_base_app/screens/profile/bloc/profile_image/profile_image_bloc.dart';
 import 'package:fire_base_app/services/database/database_service.dart';
 import 'package:fire_base_app/services/database/database_service_interface.dart';
+import 'package:fire_base_app/services/image_picker_service.dart';
 import 'package:fire_base_app/shared/locator.dart';
 import 'package:fire_base_app/shared/widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
@@ -37,6 +38,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _bloc = context.read<ProfileBloc>()..add(ProfileFetchEvent(uid));
     _profileImageBloc = ProfileImageBloc(
       databaseService: locator<DatabaseServiceInterface>(),
+      imagePickerService: locator<ImagePickerService>(),
     );
   }
 
@@ -51,6 +53,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         // no access
         // success delete
         if (state is ProfileImageLoadSuccess) {
+          _bloc.add(ProfileFetchEvent(uid));
+        }
+        if (state is ProfileImageDeleteSuccess) {
           _bloc.add(ProfileFetchEvent(uid));
         }
       },

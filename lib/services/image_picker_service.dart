@@ -3,8 +3,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class ImagePickerService {
-  static final _imagePicker = ImagePicker();
-  static Future<XFile?> pickGalleryImage() async {
+  final _imagePicker = ImagePicker();
+  Future<XFile?> pickGalleryImage() async {
     final isApple = defaultTargetPlatform == TargetPlatform.iOS;
 
     final status = await Permission.storage.request();
@@ -22,7 +22,7 @@ class ImagePickerService {
     return null;
   }
 
-  static Future<XFile?> takePhoto() async {
+  Future<XFile?> takePhoto() async {
     final isApple = defaultTargetPlatform == TargetPlatform.iOS;
 
     final status = await Permission.camera.request();
@@ -42,7 +42,7 @@ class ImagePickerService {
     return null;
   }
 
-  static Future<XFile?> pickGalleryVideo() async {
+  Future<XFile?> pickGalleryVideo() async {
     final isApple = defaultTargetPlatform == TargetPlatform.iOS;
 
     final status = await Permission.storage.request();
@@ -60,7 +60,7 @@ class ImagePickerService {
     return null;
   }
 
-  static Future<XFile?> recordVideo() async {
+  Future<XFile?> recordVideo() async {
     final isApple = defaultTargetPlatform == TargetPlatform.iOS;
 
     final status = await Permission.camera.request();

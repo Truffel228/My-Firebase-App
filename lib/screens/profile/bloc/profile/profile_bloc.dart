@@ -12,7 +12,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final DatabaseServiceInterface _databaseService;
   ProfileBloc({required databaseService})
       : _databaseService = databaseService,
-        super(ProfileLoading()) {
+        super(const ProfileLoading()) {
     on<ProfileFetchEvent>(_onProfileFetchEvent);
     on<ProfileSaveEvent>(_onProfileSaveEvent);
     on<ProfileDeleteCommentEvent>(_onProfileSaveAfterDeleteCommentEvent);
@@ -21,7 +21,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       ProfileFetchEvent event, Emitter<ProfileState> emit) async {
     final currentState = state;
     if (currentState is! ProfileLoaded) {
-      emit(ProfileLoading());
+      emit(const ProfileLoading());
     }
 
     final userData = await _databaseService.getUserData(event.uuid);

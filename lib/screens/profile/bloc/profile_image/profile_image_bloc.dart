@@ -14,7 +14,9 @@ part 'profile_image_state.dart';
 class ProfileImageBloc extends Bloc<ProfileImageEvent, ProfileImageState> {
   ProfileImageBloc({
     required DatabaseServiceInterface databaseService,
+    required ImagePickerService imagePickerService,
   })  : _databaseService = databaseService,
+        _imagePickerService = imagePickerService,
         super(const ProfileImageInitial()) {
     on<ProfileImagePickGallery>(_onProfileImagePickGallery);
     on<ProfileImageTakePhoto>(_onProfileImageTakePhoto);
@@ -22,6 +24,7 @@ class ProfileImageBloc extends Bloc<ProfileImageEvent, ProfileImageState> {
   }
 
   final DatabaseServiceInterface _databaseService;
+  final ImagePickerService _imagePickerService;
 
   FutureOr<void> _onProfileImagePickGallery(
     ProfileImagePickGallery event,
@@ -29,7 +32,7 @@ class ProfileImageBloc extends Bloc<ProfileImageEvent, ProfileImageState> {
   ) async {
     final XFile? image;
     try {
-      image = await ImagePickerService.pickGalleryImage();
+      image = await _imagePickerService.pickGalleryImage();
     } on NoGalleryAccessException {
       emit(const ProfileImageNoGalleryAccess());
       return;
@@ -49,7 +52,7 @@ class ProfileImageBloc extends Bloc<ProfileImageEvent, ProfileImageState> {
   ) async {
     final XFile? image;
     try {
-      image = await ImagePickerService.pickGalleryImage();
+      image = await _imagePickerService.takePhoto();
     } on NoCameraAccessException {
       emit(const ProfileImageNoCameraAccess());
       return;
@@ -66,7 +69,9 @@ class ProfileImageBloc extends Bloc<ProfileImageEvent, ProfileImageState> {
     ProfileImageDeletePhoto event,
     Emitter<ProfileImageState> emit,
   ) async {
-    await _databaseService.deleteUserPhoto(event.uid);
-    emit(ProfileImageDeleteSuccess());
+    final isDeleted = await _databaseService.deleteUserPhoto(event.uid);
+    if (isDeleted) {
+      emit(ProfileImageDeleteSuccess());
+    }
   }
 }

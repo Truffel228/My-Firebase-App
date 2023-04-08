@@ -3,17 +3,17 @@ import 'package:fire_base_app/shared/widgets/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class ProfileImageBottomSheet extends StatelessWidget {
-  const ProfileImageBottomSheet({
+class PickFileBottomSheet extends StatelessWidget {
+  const PickFileBottomSheet({
     Key? key,
-    required this.onPickGalleryTap,
-    required this.onTakePhotoTap,
-    required this.onDeletePhotoTap,
+    required this.onGalleryTap,
+    required this.onCameraTap,
+    required this.onDeleteTap,
   }) : super(key: key);
 
-  final VoidCallback onPickGalleryTap;
-  final VoidCallback onTakePhotoTap;
-  final VoidCallback onDeletePhotoTap;
+  final VoidCallback onGalleryTap;
+  final VoidCallback onCameraTap;
+  final VoidCallback? onDeleteTap;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,7 @@ class ProfileImageBottomSheet extends StatelessWidget {
           ConstrainedBox(
             constraints: const BoxConstraints(minWidth: 130),
             child: AppButton(
-              onTap: onPickGalleryTap,
+              onTap: onGalleryTap,
               titleWidget: Row(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -50,7 +50,7 @@ class ProfileImageBottomSheet extends StatelessWidget {
           ConstrainedBox(
             constraints: const BoxConstraints(minWidth: 130),
             child: AppButton(
-              onTap: onTakePhotoTap,
+              onTap: onCameraTap,
               titleWidget: Row(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -71,6 +71,34 @@ class ProfileImageBottomSheet extends StatelessWidget {
               ),
             ),
           ),
+          if (onDeleteTap != null) ...[
+            const SizedBox(height: 8),
+            ConstrainedBox(
+              constraints: const BoxConstraints(minWidth: 130),
+              child: AppButton(
+                onTap: onDeleteTap,
+                color: AppColors.darkRedColor,
+                titleWidget: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      FontAwesomeIcons.trash,
+                      color: AppColors.whiteColor,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'DELETE',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.whiteColor,
+                          ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );
