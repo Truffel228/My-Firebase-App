@@ -1,3 +1,4 @@
+import 'package:fire_base_app/shared/style.dart';
 import 'package:fire_base_app/shared/widgets/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -16,14 +17,8 @@ class ProfileImageBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(16),
-        ),
-      ),
-      padding: const EdgeInsets.symmetric(vertical: 8),
+    return Padding(
+      padding: const EdgeInsets.all(16),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -33,14 +28,19 @@ class ProfileImageBottomSheet extends StatelessWidget {
               onTap: onPickGalleryTap,
               titleWidget: Row(
                 mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Icon(
                     FontAwesomeIcons.solidImage,
+                    color: AppColors.whiteColor,
                   ),
                   const SizedBox(width: 8),
                   Text(
                     'GALLERY',
-                    style: Theme.of(context).textTheme.bodyMedium,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.whiteColor,
+                        ),
                   ),
                 ],
               ),
@@ -53,14 +53,19 @@ class ProfileImageBottomSheet extends StatelessWidget {
               onTap: onTakePhotoTap,
               titleWidget: Row(
                 mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Icon(
                     FontAwesomeIcons.camera,
+                    color: AppColors.whiteColor,
                   ),
                   const SizedBox(width: 8),
                   Text(
                     'PHOTO',
-                    style: Theme.of(context).textTheme.bodyMedium,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.whiteColor,
+                        ),
                   ),
                 ],
               ),

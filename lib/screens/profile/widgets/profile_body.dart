@@ -143,9 +143,10 @@ class _ProfileBodyState extends State<ProfileBody> {
 
   void _onAvatarTap() => showModalBottomSheet(
         context: context,
+        backgroundColor: AppColors.whiteColor,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
-            top: Radius.circular(16),
+            top: Radius.circular(20),
           ),
         ),
         builder: (context) => ProfileImageBottomSheet(
