@@ -10,9 +10,7 @@ abstract class DatabaseServiceInterface {
   Future<void> setInitialUserData(String userId);
   Future<UserModel> getUserData(String userId);
   Future<UserModel> userDataFromApiToModel(UserModelApi userDataApi);
-  Future<void> saveCommentToCollection(MapComment comment);
-  Future<void> saveCommentIdToUser(
-      {required String commentId, required String userId});
+  Future<void> saveMapComment({required MapComment mapComment, required String userId});
   Future<List<MapComment>> getAllMapComments();
   Future<void> deleteMapComment(String userId, String commentId);
   Future<void> setUserPhoto(String uid, XFile file);

@@ -18,6 +18,11 @@ class AddMapCommentState extends Equatable {
         isLoading: isLoading,
       );
 
+  AddMapCommentSuccess success() => AddMapCommentSuccess(
+        attachments: attachments,
+        isLoading: isLoading,
+      );
+
   AddMapCommentState copyWith({
     List<Attachment>? attachments,
     bool? isLoading,
@@ -47,4 +52,11 @@ class Attachment {
   final FileType fileType;
   final File? videoPreview;
   final int? videoDurationSec;
+}
+
+class AddMapCommentSuccess extends AddMapCommentState {
+  const AddMapCommentSuccess({
+    List<Attachment> attachments = const [],
+    bool isLoading = false,
+  }) : super(attachments: attachments, isLoading: isLoading);
 }

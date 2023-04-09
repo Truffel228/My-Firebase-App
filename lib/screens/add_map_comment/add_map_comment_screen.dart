@@ -1,6 +1,9 @@
+import 'package:fire_base_app/models/app_user/app_user.dart';
 import 'package:fire_base_app/models/map_comment/map_comment.dart';
 import 'package:fire_base_app/screens/add_map_comment/bloc/add_map_comment_bloc.dart';
 import 'package:fire_base_app/screens/add_map_comment/widgets/widgets.dart';
+import 'package:fire_base_app/screens/map/bloc/map_bloc.dart';
+import 'package:fire_base_app/screens/profile/bloc/profile/profile_bloc.dart';
 import 'package:fire_base_app/services/database/database_service_interface.dart';
 import 'package:fire_base_app/services/image_picker_service.dart';
 import 'package:fire_base_app/shared/locator.dart';
@@ -13,13 +16,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class AddMapCommentForm extends StatefulWidget {
   const AddMapCommentForm({
     Key? key,
-    required this.onApplyTap,
-    required this.onCancelTap,
     required this.controller,
+    required this.latitude,
+    required this.longitude,
   }) : super(key: key);
-  final void Function(Category) onApplyTap;
-  final VoidCallback onCancelTap;
+
+  // final void Function(Category) onApplyTap;
+  // final VoidCallback onCancelTap;
   final TextEditingController controller;
+  final double latitude;
+  final double longitude;
 
   @override
   State<AddMapCommentForm> createState() => _AddMapCommentFormState();
@@ -31,6 +37,7 @@ class _AddMapCommentFormState extends State<AddMapCommentForm> {
 
   final _key = GlobalKey<FormState>();
   late final AddMapCommentBloc _bloc;
+  late final String _appUserUid;
 
   @override
   void initState() {
@@ -38,6 +45,7 @@ class _AddMapCommentFormState extends State<AddMapCommentForm> {
       databaseService: locator<DatabaseServiceInterface>(),
       imagePickerService: locator<ImagePickerService>(),
     );
+    _appUserUid = context.read<AppUser?>()!.uid;
     super.initState();
   }
 
@@ -52,7 +60,13 @@ class _AddMapCommentFormState extends State<AddMapCommentForm> {
         },
         child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
-          child: BlocBuilder<AddMapCommentBloc, AddMapCommentState>(
+          child: BlocConsumer<AddMapCommentBloc, AddMapCommentState>(
+            listener: (context, state) {
+              if (state is AddMapCommentSuccess) {
+                context.read<ProfileBloc>().add(ProfileFetchEvent(_appUserUid));
+                context.read<MapBloc>().add(MapUpdate());
+              }
+            },
             builder: (context, state) {
               return Container(
                 margin: EdgeInsets.only(
@@ -70,7 +84,7 @@ class _AddMapCommentFormState extends State<AddMapCommentForm> {
                           AnimatedOpacity(
                             duration: const Duration(milliseconds: 200),
                             opacity: _categoryError ? 1 : 0,
-                            child:  Text(
+                            child: Text(
                               'Category is needed',
                               style: TextStyle(color: AppColors.redColor),
                             ),
@@ -141,7 +155,16 @@ class _AddMapCommentFormState extends State<AddMapCommentForm> {
   void _onApplyTap() {
     if (_key.currentState!.validate()) {
       if (_category != null) {
-        widget.onApplyTap.call(_category!);
+        _bloc.add(
+          AddMapCommentSaveEvent(
+            content: widget.controller.text,
+            latitude: widget.latitude,
+            longitude: widget.longitude,
+            category: _category!,
+            userId: _appUserUid,
+          ),
+        );
+        // widget.onApplyTap.call(_category!);
       } else {
         setState(() {
           _categoryError = true;

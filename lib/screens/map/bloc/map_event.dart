@@ -10,29 +10,29 @@ class MapInitEvent extends MapEvent {
   List<Object?> get props => [];
 }
 
-class MapSaveCommentEvent extends MapEvent {
-  const MapSaveCommentEvent({
-    required this.mapCommentContent,
-    required this.mapCommentLatitude,
-    required this.mapCommentLongitude,
-    required this.mapCommentUserId,
-    required this.category,
-  });
-  final String mapCommentContent;
-  //TODO: Убрать lat long
-  final double mapCommentLatitude;
-  final double mapCommentLongitude;
-  final String mapCommentUserId;
-  final Category category;
+// class MapSaveCommentEvent extends MapEvent {
+//   const MapSaveCommentEvent({
+//     required this.mapCommentContent,
+//     required this.mapCommentLatitude,
+//     required this.mapCommentLongitude,
+//     required this.mapCommentUserId,
+//     required this.category,
+//   });
+//   final String mapCommentContent;
+//   //TODO: Убрать lat long
+//   final double mapCommentLatitude;
+//   final double mapCommentLongitude;
+//   final String mapCommentUserId;
+//   final Category category;
 
-  @override
-  List<Object?> get props => [
-        mapCommentContent,
-        mapCommentLatitude,
-        mapCommentLongitude,
-        mapCommentUserId
-      ];
-}
+//   @override
+//   List<Object?> get props => [
+//         mapCommentContent,
+//         mapCommentLatitude,
+//         mapCommentLongitude,
+//         mapCommentUserId
+//       ];
+// }
 
 class MapUpdate extends MapEvent {
   @override

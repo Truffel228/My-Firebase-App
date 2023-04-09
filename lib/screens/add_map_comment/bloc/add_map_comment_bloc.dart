@@ -1,15 +1,17 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:typed_data';
+import 'dart:math';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:fire_base_app/models/map_comment/map_comment.dart';
 import 'package:fire_base_app/screens/add_map_comment/add_map_comment_screen.dart';
 import 'package:fire_base_app/services/database/database_service_interface.dart';
 import 'package:fire_base_app/services/image_picker_service.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_video_info/flutter_video_info.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:meta/meta.dart';
+import 'package:uuid/uuid.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
 part 'add_map_comment_event.dart';
@@ -25,6 +27,7 @@ class AddMapCommentBloc extends Bloc<AddMapCommentEvent, AddMapCommentState> {
     on<AddMapCommentFileFromCamera>(_onAddMapCommentFileFromCamera);
     on<AddMapCommentFileFromGallery>(_onAddMapCommentFileFromGallery);
     on<AddMapCommentAttachmentDelete>(_onAddMapCommentAttachmentDelete);
+    on<AddMapCommentSaveEvent>(_onAddMapCommentSaveEvent);
   }
 
   final DatabaseServiceInterface _databaseService;
@@ -151,5 +154,41 @@ class AddMapCommentBloc extends Bloc<AddMapCommentEvent, AddMapCommentState> {
     final List<Attachment> newAttachments = List.from(currentState.attachments);
     newAttachments.removeWhere((element) => element.file.path == event.path);
     emit(state.copyWith(attachments: newAttachments));
+  }
+
+  FutureOr<void> _onAddMapCommentSaveEvent(
+    AddMapCommentSaveEvent event,
+    Emitter<AddMapCommentState> emit,
+  ) async {
+    try {
+      //TODO: Create Repository for next logic
+      const uuid = Uuid();
+
+      final firstPartId = event.userId.substring(0, 5);
+      final secondPartId = Random().nextInt(1000).toString().padLeft(3, '0');
+      final thirdPartId = DateTime.now().toIso8601String();
+      final mapCommentId = '$firstPartId$secondPartId$thirdPartId';
+
+      final createTimeTs = DateTime.now().millisecondsSinceEpoch;
+      final mapComment = MapComment(
+        id: mapCommentId,
+        comment: event.content,
+        latitude: event.latitude,
+        longitude: event.longitude,
+        userId: event.userId,
+        category: event.category,
+        createdTs: createTimeTs,
+      );
+
+      //TODO: Сделать метод для сохранения коментария в бд
+      await _databaseService.saveMapComment(
+        mapComment: mapComment,
+        userId: event.userId,
+      );
+
+      emit(state.success());
+    } catch (e) {
+      print(e);
+    }
   }
 }

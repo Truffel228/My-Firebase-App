@@ -225,26 +225,26 @@ class _MapWidgetState extends State<MapWidget> {
     return list;
   }
 
-  void _onFormApplyTap(Category category) {
-    FocusScope.of(context).unfocus();
-    context.read<MapBloc>().add(
-          MapSaveCommentEvent(
-            mapCommentContent: _commentController.text,
-            mapCommentLatitude: _mapController.center.latitude,
-            mapCommentLongitude: _mapController.center.longitude,
-            mapCommentUserId: appUserUid,
-            category: category,
-          ),
-        );
-    _commentController.clear();
-    Navigator.of(context).pop();
-  }
+  // void _onFormApplyTap(Category category) {
+  //   FocusScope.of(context).unfocus();
+  //   context.read<MapBloc>().add(
+  //         MapSaveCommentEvent(
+  //           mapCommentContent: _commentController.text,
+  //           mapCommentLatitude: _mapController.center.latitude,
+  //           mapCommentLongitude: _mapController.center.longitude,
+  //           mapCommentUserId: appUserUid,
+  //           category: category,
+  //         ),
+  //       );
+  //   _commentController.clear();
+  //   Navigator.of(context).pop();
+  // }
 
-  void _onFormCancelTap() {
-    FocusScope.of(context).unfocus();
-    _commentController.clear();
-    Navigator.of(context).pop();
-  }
+  // void _onFormCancelTap() {
+  //   FocusScope.of(context).unfocus();
+  //   _commentController.clear();
+  //   Navigator.of(context).pop();
+  // }
 
   void _zoomIn() {
     final zoom = _mapController.zoom + 1;
@@ -282,9 +282,11 @@ class _MapWidgetState extends State<MapWidget> {
       isScrollControlled: true,
       enableDrag: false,
       builder: (context) => AddMapCommentForm(
-        onApplyTap: _onFormApplyTap,
-        onCancelTap: _onFormCancelTap,
+
+
         controller: _commentController,
+        latitude: _mapController.center.latitude,
+        longitude: _mapController.center.longitude,
       ),
     );
   }

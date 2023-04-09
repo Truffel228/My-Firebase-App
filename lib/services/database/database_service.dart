@@ -49,25 +49,9 @@ class DatabaseService extends DatabaseServiceInterface {
     updateUserData(userId: uid, userData: initialUserData);
   }
 
-  @override
-  Future<void> saveCommentToCollection(MapComment comment) async {
-    return await mapCommentsCollection.doc(comment.id).set(comment.toJson());
-  }
-
-  @override
-  Future<void> saveCommentIdToUser(
-      {required String commentId, required String userId}) async {
-    final mapCommentIds = await _getUserCommentIds(userId);
-    mapCommentIds.add(commentId);
-    //TODO: Set comment ids to user
-    return await usersCollection
-        .doc(userId)
-        .update({'map_comment_ids': mapCommentIds});
-  }
-
   Future<List<String>> _getUserCommentIds(String userId) async {
     final UserModelApi userDataApi = await _getUserDataApi(userId);
-    return userDataApi.mapCommentIds;
+    return List.from(userDataApi.mapCommentIds);
   }
 
   @override
@@ -170,5 +154,21 @@ class DatabaseService extends DatabaseServiceInterface {
     await storage.ref('profile_image/${userModelApi.profileImage}').delete();
     await usersCollection.doc(uid).update({'profile_image': null});
     return true;
+  }
+
+  @override
+  Future<void> saveMapComment({
+    required MapComment mapComment,
+    required String userId,
+  }) async {
+    final mapCommentIds = await _getUserCommentIds(userId);
+    mapCommentIds.add(mapComment.id);
+
+    //TODO: Set comment ids to user
+    await usersCollection
+        .doc(userId)
+        .update({'map_comment_ids': mapCommentIds});
+
+    await mapCommentsCollection.doc(mapComment.id).set(mapComment.toJson());
   }
 }

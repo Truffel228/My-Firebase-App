@@ -9,7 +9,6 @@ import 'package:fire_base_app/services/geolocation/geolocation_service.dart';
 import 'package:fire_base_app/services/geolocation/geolocation_service_interface.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:meta/meta.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:uuid/uuid.dart';
 
 part 'map_event.dart';
@@ -33,7 +32,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     on<MapInitEvent>(_onMapInitEvent);
 
     /// Сохранение коментария на карте с экрана карты
-    on<MapSaveCommentEvent>(_onMapSaveCommentEvent);
+    // on<MapSaveCommentEvent>(_onMapSaveCommentEvent);
 
     /// Позиция пользователя на карте меняется
     on<MapUserPositionChangedEvent>(_onMapUserPositionChangedEvent);
@@ -102,62 +101,62 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     }
   }
 
-  void _onMapSaveCommentEvent(MapSaveCommentEvent event, emit) async {
-    final currentState = state;
-    if (currentState is! MapLoaded) {
-      return;
-    }
+  // void _onMapSaveCommentEvent(MapSaveCommentEvent event, emit) async {
+  //   final currentState = state;
+  //   if (currentState is! MapLoaded) {
+  //     return;
+  //   }
 
-    emit(
-      currentState.copyWith(isCommentSaving: true),
-      // Mapl(
-      //   mapComments: _mapComments,
-      //   cameraPosition:
-      //       LatLng(event.mapCommentLatitude, event.mapCommentLongitude),
-      //   userPosition: _userPosition,
-      // ),
-    );
-    final userId = event.mapCommentUserId;
-    try {
-      //TODO: Create Repository for next logic
-      const uuid = Uuid();
+  //   emit(
+  //     currentState.copyWith(isCommentSaving: true),
+  //     // Mapl(
+  //     //   mapComments: _mapComments,
+  //     //   cameraPosition:
+  //     //       LatLng(event.mapCommentLatitude, event.mapCommentLongitude),
+  //     //   userPosition: _userPosition,
+  //     // ),
+  //   );
+  //   final userId = event.mapCommentUserId;
+  //   try {
+  //     //TODO: Create Repository for next logic
+  //     const uuid = Uuid();
 
-      final firstPartId = event.mapCommentUserId.substring(0, 5);
-      final secondPartId = Random().nextInt(1000).toString().padLeft(3, '0');
-      final thirdPartId = DateTime.now().toIso8601String();
-      final mapCommentId = '$firstPartId$secondPartId$thirdPartId';
+  //     final firstPartId = event.mapCommentUserId.substring(0, 5);
+  //     final secondPartId = Random().nextInt(1000).toString().padLeft(3, '0');
+  //     final thirdPartId = DateTime.now().toIso8601String();
+  //     final mapCommentId = '$firstPartId$secondPartId$thirdPartId';
 
-      await _databaseService.saveCommentIdToUser(
-          userId: userId, commentId: mapCommentId);
+  //     await _databaseService.saveCommentIdToUser(
+  //         userId: userId, commentId: mapCommentId);
 
-      final createTimeTs = DateTime.now().millisecondsSinceEpoch;
-      final mapComment = MapComment(
-        id: mapCommentId,
-        comment: event.mapCommentContent,
-        latitude: event.mapCommentLatitude,
-        longitude: event.mapCommentLongitude,
-        userId: userId,
-        category: event.category,
-        createdTs: createTimeTs,
-      );
+  //     final createTimeTs = DateTime.now().millisecondsSinceEpoch;
+  //     final mapComment = MapComment(
+  //       id: mapCommentId,
+  //       comment: event.mapCommentContent,
+  //       latitude: event.mapCommentLatitude,
+  //       longitude: event.mapCommentLongitude,
+  //       userId: userId,
+  //       category: event.category,
+  //       createdTs: createTimeTs,
+  //     );
 
-      //TODO: Сделать метод для сохранения коментария в бд
-      await _databaseService.saveCommentToCollection(mapComment);
+  //     //TODO: Сделать метод для сохранения коментария в бд
+  //     await _databaseService.saveCommentToCollection(mapComment);
 
-      /// update state with new comment
-      final mapComments = await _databaseService.getAllMapComments();
-      emit(MapUpdateUserProfile());
-      emit(
-        MapLoaded(
-          mapComments: mapComments,
-          userPosition: currentState.userPosition,
-          cameraPosition: currentState.cameraPosition,
-        ),
-      );
-    } catch (e) {
-      print(e);
-    }
-  }
+  //     /// update state with new comment
+  //     final mapComments = await _databaseService.getAllMapComments();
+  //     emit(MapUpdateUserProfile());
+  //     emit(
+  //       MapLoaded(
+  //         mapComments: mapComments,
+  //         userPosition: currentState.userPosition,
+  //         cameraPosition: currentState.cameraPosition,
+  //       ),
+  //     );
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  // }
 
   void _onMapUserPositionChangedEvent(MapUserPositionChangedEvent event, emit) {
     print('Position changed');
@@ -184,6 +183,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   @override
   Future<void> close() {
     _positionSubscription.cancel();
+    _geoserviceStatusSubscription.cancel();
     return super.close();
   }
 
