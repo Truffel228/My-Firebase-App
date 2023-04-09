@@ -78,6 +78,9 @@ class AddMapCommentBloc extends Bloc<AddMapCommentEvent, AddMapCommentState> {
     newAttachments.add(newAttachment);
 
     emit(
+      state.addFileSuccess(),
+    );
+    emit(
       state.copyWith(
         attachments: newAttachments,
       ),
@@ -130,6 +133,9 @@ class AddMapCommentBloc extends Bloc<AddMapCommentEvent, AddMapCommentState> {
 
     newAttachments.add(newAttachment);
 
+    emit(
+      state.addFileSuccess(),
+    );
     emit(
       state.copyWith(
         attachments: newAttachments,

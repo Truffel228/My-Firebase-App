@@ -9,98 +9,116 @@ class PickFileBottomSheet extends StatelessWidget {
     required this.onGalleryTap,
     required this.onCameraTap,
     this.onDeleteTap,
+    this.isLoading = false,
   }) : super(key: key);
 
   final VoidCallback onGalleryTap;
   final VoidCallback onCameraTap;
   final VoidCallback? onDeleteTap;
+  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ConstrainedBox(
-            constraints: const BoxConstraints(minWidth: 130),
-            child: AppButton(
-              onTap: onGalleryTap,
-              titleWidget: Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    FontAwesomeIcons.solidImage,
-                    color: AppColors.whiteColor,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'GALLERY',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.whiteColor,
-                        ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 8),
-          ConstrainedBox(
-            constraints: const BoxConstraints(minWidth: 130),
-            child: AppButton(
-              onTap: onCameraTap,
-              titleWidget: Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    FontAwesomeIcons.camera,
-                    color: AppColors.whiteColor,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'CAMERA',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.whiteColor,
-                        ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          if (onDeleteTap != null) ...[
-            const SizedBox(height: 8),
-            ConstrainedBox(
-              constraints: const BoxConstraints(minWidth: 130),
-              child: AppButton(
-                onTap: onDeleteTap,
-                color: AppColors.darkRedColor,
-                titleWidget: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      FontAwesomeIcons.trash,
-                      color: AppColors.whiteColor,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      'DELETE',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.whiteColor,
-                          ),
-                    ),
-                  ],
+      child: isLoading
+          ? UnconstrainedBox(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 24),
+                child: SizedBox.square(
+                  dimension: 40,
+                  child: CircularProgressIndicator(
+                      color: Theme.of(context).primaryColor),
                 ),
               ),
+            )
+          : Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ConstrainedBox(
+                  constraints: const BoxConstraints(minWidth: 130),
+                  child: AppButton(
+                    onTap: onGalleryTap,
+                    titleWidget: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          FontAwesomeIcons.solidImage,
+                          color: AppColors.whiteColor,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'GALLERY',
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    fontWeight: FontWeight.w500,
+                                    color: AppColors.whiteColor,
+                                  ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                ConstrainedBox(
+                  constraints: const BoxConstraints(minWidth: 130),
+                  child: AppButton(
+                    onTap: onCameraTap,
+                    titleWidget: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          FontAwesomeIcons.camera,
+                          color: AppColors.whiteColor,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'CAMERA',
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    fontWeight: FontWeight.w500,
+                                    color: AppColors.whiteColor,
+                                  ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                if (onDeleteTap != null) ...[
+                  const SizedBox(height: 8),
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(minWidth: 130),
+                    child: AppButton(
+                      onTap: onDeleteTap,
+                      color: AppColors.darkRedColor,
+                      titleWidget: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            FontAwesomeIcons.trash,
+                            color: AppColors.whiteColor,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'DELETE',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColors.whiteColor,
+                                ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ],
             ),
-          ],
-        ],
-      ),
     );
   }
 }

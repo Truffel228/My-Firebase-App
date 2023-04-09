@@ -13,6 +13,11 @@ class AddMapCommentState extends Equatable {
   @override
   List<Object?> get props => [attachments, isLoading];
 
+  AddMapCommentAddFileSuccess addFileSuccess() => AddMapCommentAddFileSuccess(
+        attachments: attachments,
+        isLoading: isLoading,
+      );
+
   AddMapCommentState copyWith({
     List<Attachment>? attachments,
     bool? isLoading,
@@ -22,6 +27,13 @@ class AddMapCommentState extends Equatable {
       isLoading: isLoading ?? this.isLoading,
     );
   }
+}
+
+class AddMapCommentAddFileSuccess extends AddMapCommentState {
+  const AddMapCommentAddFileSuccess({
+    List<Attachment> attachments = const [],
+    bool isLoading = false,
+  }) : super(attachments: attachments, isLoading: isLoading);
 }
 
 class Attachment {

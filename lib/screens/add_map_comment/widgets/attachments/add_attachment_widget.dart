@@ -71,9 +71,17 @@ class AddAttachmentWidget extends StatelessWidget {
 
   void _onAddAttachmentTap(BuildContext context) => showModalBottomSheet(
         context: context,
-        builder: (_) => PickFileBottomSheet(
-          onGalleryTap: () => _onGalleryTap(context),
-          onCameraTap: () => _onCameraTap(context),
+        builder: (_) => BlocListener<AddMapCommentBloc, AddMapCommentState>(
+          bloc: context.read<AddMapCommentBloc>(),
+          listener: (context, state) {
+            if (state is AddMapCommentAddFileSuccess) {
+              Navigator.of(context).pop();
+            }
+          },
+          child: PickFileBottomSheet(
+            onGalleryTap: () => _onGalleryTap(context),
+            onCameraTap: () => _onCameraTap(context),
+          ),
         ),
       );
 }
