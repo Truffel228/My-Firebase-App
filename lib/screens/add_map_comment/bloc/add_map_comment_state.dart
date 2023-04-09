@@ -18,9 +18,9 @@ class AddMapCommentState extends Equatable {
         isLoading: isLoading,
       );
 
-  AddMapCommentSuccess success() => AddMapCommentSuccess(
-        attachments: attachments,
-        isLoading: isLoading,
+  AddMapCommentSuccess success() => const AddMapCommentSuccess(
+        attachments: [],
+        isLoading: false,
       );
 
   AddMapCommentState copyWith({

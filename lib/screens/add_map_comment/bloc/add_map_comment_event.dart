@@ -5,6 +5,13 @@ abstract class AddMapCommentEvent extends Equatable {
   const AddMapCommentEvent();
 }
 
+// class AddMapCommentInit extends AddMapCommentEvent {
+//   const AddMapCommentInit();
+
+//   @override
+//   List<Object?> get props => [];
+// }
+
 class AddMapCommentFileFromGallery extends AddMapCommentEvent {
   const AddMapCommentFileFromGallery(this.fileType);
 

@@ -50,6 +50,7 @@ class _AddMapCommentFormState extends State<AddMapCommentForm> {
       child: BlocConsumer<AddMapCommentBloc, AddMapCommentState>(
         listener: (context, state) {
           if (state is AddMapCommentSuccess) {
+            widget.controller.clear();
             context.read<ProfileBloc>().add(ProfileFetchEvent(_appUserUid));
             context.read<MapBloc>().add(MapUpdate());
             Navigator.of(context).pop();
@@ -60,78 +61,91 @@ class _AddMapCommentFormState extends State<AddMapCommentForm> {
             margin: EdgeInsets.only(
                 bottom: MediaQuery.of(context).viewInsets.bottom),
             padding: const EdgeInsets.only(bottom: 24, top: 16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      AnimatedOpacity(
-                        duration: const Duration(milliseconds: 200),
-                        opacity: _categoryError ? 1 : 0,
-                        child: Text(
-                          'Category is needed',
-                          style: TextStyle(color: AppColors.redColor),
+            child: state.isLoading
+                ? UnconstrainedBox(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 122),
+                      child: SizedBox.square(
+                        dimension: 50,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 5,
+                          color: Theme.of(context).primaryColor,
                         ),
                       ),
-                      DropdownButton<Category>(
-                        alignment: Alignment.center,
-                        hint: Text('Category'),
-                        value: _category,
-                        onChanged: (value) => setState(() {
-                          _category = value;
-                          _categoryError = false;
-                        }),
-                        items: Category.values
-                            .map(
-                              (e) => DropdownMenuItem<Category>(
-                                value: e,
-                                child: Text(e.getTitle(context)),
+                    ),
+                  )
+                : Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            AnimatedOpacity(
+                              duration: const Duration(milliseconds: 200),
+                              opacity: _categoryError ? 1 : 0,
+                              child: Text(
+                                'Category is needed',
+                                style: TextStyle(color: AppColors.redColor),
                               ),
-                            )
-                            .toList(),
+                            ),
+                            DropdownButton<Category>(
+                              alignment: Alignment.center,
+                              hint: Text('Category'),
+                              value: _category,
+                              onChanged: (value) => setState(() {
+                                _category = value;
+                                _categoryError = false;
+                              }),
+                              items: Category.values
+                                  .map(
+                                    (e) => DropdownMenuItem<Category>(
+                                      value: e,
+                                      child: Text(e.getTitle(context)),
+                                    ),
+                                  )
+                                  .toList(),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Attachments(
+                        attachments: state.attachments,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Form(
+                          key: _key,
+                          child: AppTextField(
+                            controller: widget.controller,
+                            validator: (text) => text!.isEmpty
+                                ? 'Text of your comment cannot be empty'
+                                : null,
+                            minLines: 2,
+                            maxLines: 5,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          AppButton(
+                            color: AppColors.darkRedColor,
+                            onTap: _onCancelTap,
+                            title: 'Cancel',
+                          ),
+                          AppButton(
+                            onTap: _onApplyTap,
+                            color: AppColors.greenColor,
+                            title: 'Apply',
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ),
-                Attachments(
-                  attachments: state.attachments,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Form(
-                    key: _key,
-                    child: AppTextField(
-                      controller: widget.controller,
-                      validator: (text) => text!.isEmpty
-                          ? 'Text of your comment cannot be empty'
-                          : null,
-                      minLines: 2,
-                      maxLines: 5,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    AppButton(
-                      color: AppColors.darkRedColor,
-                      onTap: _onCancelTap,
-                      title: 'Cancel',
-                    ),
-                    AppButton(
-                      onTap: _onApplyTap,
-                      color: AppColors.greenColor,
-                      title: 'Apply',
-                    ),
-                  ],
-                ),
-              ],
-            ),
           );
         },
       ),

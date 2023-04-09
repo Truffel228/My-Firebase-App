@@ -24,6 +24,7 @@ class AddMapCommentBloc extends Bloc<AddMapCommentEvent, AddMapCommentState> {
   })  : _databaseService = databaseService,
         _imagePickerService = imagePickerService,
         super(const AddMapCommentState()) {
+    // on<AddMapCommentInit>(_onAddMapCommentInit);
     on<AddMapCommentFileFromCamera>(_onAddMapCommentFileFromCamera);
     on<AddMapCommentFileFromGallery>(_onAddMapCommentFileFromGallery);
     on<AddMapCommentAttachmentDelete>(_onAddMapCommentAttachmentDelete);
@@ -32,6 +33,15 @@ class AddMapCommentBloc extends Bloc<AddMapCommentEvent, AddMapCommentState> {
 
   final DatabaseServiceInterface _databaseService;
   final ImagePickerService _imagePickerService;
+
+  // FutureOr<void> _onAddMapCommentInit(
+  //   event,
+  //   Emitter<AddMapCommentState> emit,
+  // ) {
+  //   emit(
+  //     const AddMapCommentState(),
+  //   );
+  // }
 
   FutureOr<void> _onAddMapCommentFileFromCamera(
     AddMapCommentFileFromCamera event,
@@ -160,10 +170,14 @@ class AddMapCommentBloc extends Bloc<AddMapCommentEvent, AddMapCommentState> {
     AddMapCommentSaveEvent event,
     Emitter<AddMapCommentState> emit,
   ) async {
+    final currentState = state;
+    emit(
+      currentState.copyWith(isLoading: true),
+    );
+
     final files = state.attachments.map((e) => e.file).toList();
 
     try {
-
       final mapCommentData = MapCommentData(
         text: event.text,
         latitude: event.latitude,
@@ -171,7 +185,6 @@ class AddMapCommentBloc extends Bloc<AddMapCommentEvent, AddMapCommentState> {
         category: event.category,
       );
 
-      //TODO: Сделать метод для сохранения коментария в бд
       await _databaseService.saveMapComment(
         mapCommentData: mapCommentData,
         userId: event.userId,
