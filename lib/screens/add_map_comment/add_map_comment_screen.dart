@@ -1,6 +1,6 @@
 import 'package:fire_base_app/models/map_comment/map_comment.dart';
 import 'package:fire_base_app/screens/add_map_comment/bloc/add_map_comment_bloc.dart';
-import 'package:fire_base_app/screens/add_map_comment/widgets/attachments.dart';
+import 'package:fire_base_app/screens/add_map_comment/widgets/widgets.dart';
 import 'package:fire_base_app/services/database/database_service_interface.dart';
 import 'package:fire_base_app/services/image_picker_service.dart';
 import 'package:fire_base_app/shared/locator.dart';
@@ -43,93 +43,96 @@ class _AddMapCommentFormState extends State<AddMapCommentForm> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return WillPopScope(
-      onWillPop: () async {
-        widget.controller.clear();
-        return true;
-      },
-      child: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: BlocBuilder<AddMapCommentBloc, AddMapCommentState>(
-          bloc: _bloc,
-          builder: (context, state) {
-            return Container(
-              margin: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).viewInsets.bottom),
-              padding: const EdgeInsets.only(bottom: 24, top: 16),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        AnimatedOpacity(
-                          duration: const Duration(milliseconds: 200),
-                          opacity: _categoryError ? 1 : 0,
-                          child: const Text(
-                            'Category is needed',
-                            style: TextStyle(color: AppColors.redColor),
+    return BlocProvider(
+      create: (context) => _bloc,
+      child: WillPopScope(
+        onWillPop: () async {
+          widget.controller.clear();
+          return true;
+        },
+        child: GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: BlocBuilder<AddMapCommentBloc, AddMapCommentState>(
+            builder: (context, state) {
+              return Container(
+                margin: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom),
+                padding: const EdgeInsets.only(bottom: 24, top: 16),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          AnimatedOpacity(
+                            duration: const Duration(milliseconds: 200),
+                            opacity: _categoryError ? 1 : 0,
+                            child:  Text(
+                              'Category is needed',
+                              style: TextStyle(color: AppColors.redColor),
+                            ),
                           ),
+                          DropdownButton<Category>(
+                            alignment: Alignment.center,
+                            hint: Text('Category'),
+                            value: _category,
+                            onChanged: (value) => setState(() {
+                              _category = value;
+                              _categoryError = false;
+                            }),
+                            items: Category.values
+                                .map(
+                                  (e) => DropdownMenuItem<Category>(
+                                    value: e,
+                                    child: Text(e.getTitle(context)),
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Attachments(
+                      attachments: state.attachments,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Form(
+                        key: _key,
+                        child: AppTextField(
+                          controller: widget.controller,
+                          validator: (text) => text!.isEmpty
+                              ? 'Text of your comment cannot be empty'
+                              : null,
+                          minLines: 2,
+                          maxLines: 5,
                         ),
-                        DropdownButton<Category>(
-                          alignment: Alignment.center,
-                          hint: Text('Category'),
-                          value: _category,
-                          onChanged: (value) => setState(() {
-                            _category = value;
-                            _categoryError = false;
-                          }),
-                          items: Category.values
-                              .map(
-                                (e) => DropdownMenuItem<Category>(
-                                  value: e,
-                                  child: Text(e.getTitle(context)),
-                                ),
-                              )
-                              .toList(),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        AppButton(
+                          color: AppColors.darkRedColor,
+                          onTap: _onCancelTap,
+                          title: 'Cancel',
+                        ),
+                        AppButton(
+                          onTap: _onApplyTap,
+                          color: AppColors.greenColor,
+                          title: 'Apply',
                         ),
                       ],
                     ),
-                  ),
-                  Attachments(),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Form(
-                      key: _key,
-                      child: AppTextField(
-                        controller: widget.controller,
-                        validator: (text) => text!.isEmpty
-                            ? 'Text of your comment cannot be empty'
-                            : null,
-                        minLines: 2,
-                        maxLines: 5,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      AppButton(
-                        color: AppColors.darkRedColor,
-                        onTap: _onCancelTap,
-                        title: 'Cancel',
-                      ),
-                      AppButton(
-                        onTap: _onApplyTap,
-                        color: AppColors.greenColor,
-                        title: 'Apply',
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            );
-          },
+                  ],
+                ),
+              );
+            },
+          ),
         ),
       ),
     );

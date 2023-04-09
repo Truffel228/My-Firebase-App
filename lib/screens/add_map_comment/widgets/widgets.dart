@@ -1,1 +1,1 @@
-export 'attachments.dart';
+export 'attachments/attachments.dart';

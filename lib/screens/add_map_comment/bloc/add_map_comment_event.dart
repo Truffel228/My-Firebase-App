@@ -22,3 +22,10 @@ class AddMapCommentFileFromCamera extends AddMapCommentEvent {
   @override
   List<Object?> get props => [fileType];
 }
+
+class AddMapCommentAttachmentDelete extends AddMapCommentEvent {
+  const AddMapCommentAttachmentDelete(this.path);
+  final String path;
+  @override
+  List<Object?> get props => [path];
+}

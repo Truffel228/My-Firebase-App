@@ -1,9 +1,8 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fire_base_app/models/app_user/app_user.dart';
 import 'package:fire_base_app/models/map_comment/map_comment.dart';
 import 'package:fire_base_app/models/user_model/user_model/user_model.dart';
 import 'package:fire_base_app/screens/profile/widgets/profile_avatar.dart';
-import 'package:fire_base_app/screens/profile/widgets/profile_image_bottom_sheet.dart';
+import 'package:fire_base_app/shared/widgets/pick_file_bottom_sheet.dart';
 import 'package:fire_base_app/shared/style.dart';
 import 'package:fire_base_app/shared/widgets/map_comment_list_item.dart';
 import 'package:fire_base_app/shared/widgets/app_button.dart';

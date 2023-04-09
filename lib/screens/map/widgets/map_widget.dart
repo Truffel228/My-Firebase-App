@@ -278,8 +278,9 @@ class _MapWidgetState extends State<MapWidget> {
           top: Radius.circular(20),
         ),
       ),
-      isScrollControlled: true,
       context: context,
+      isScrollControlled: true,
+      enableDrag: false,
       builder: (context) => AddMapCommentForm(
         onApplyTap: _onFormApplyTap,
         onCancelTap: _onFormCancelTap,

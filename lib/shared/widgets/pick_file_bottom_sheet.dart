@@ -8,7 +8,7 @@ class PickFileBottomSheet extends StatelessWidget {
     Key? key,
     required this.onGalleryTap,
     required this.onCameraTap,
-    required this.onDeleteTap,
+    this.onDeleteTap,
   }) : super(key: key);
 
   final VoidCallback onGalleryTap;
