@@ -1,10 +1,13 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fire_base_app/models/map_comment/map_comment.dart';
 import 'package:fire_base_app/models/user_model/user_model/user_model.dart';
 import 'package:fire_base_app/models/user_model/user_model_api/user_model_api.dart';
+import 'package:fire_base_app/screens/add_map_comment/bloc/add_map_comment_bloc.dart';
 import 'package:fire_base_app/services/database/database_service_interface.dart';
+import 'package:fire_base_app/services/id_generator_service.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -158,17 +161,47 @@ class DatabaseService extends DatabaseServiceInterface {
 
   @override
   Future<void> saveMapComment({
-    required MapComment mapComment,
+    required MapCommentData mapCommentData,
     required String userId,
+    required List<File> files,
   }) async {
-    final mapCommentIds = await _getUserCommentIds(userId);
-    mapCommentIds.add(mapComment.id);
+    //TODO: Separated service
+    final mapCommentId = IdGeneratorService.generateMapCommentId(userId);
 
-    //TODO: Set comment ids to user
+    /// Add map comment id to user
+    final mapCommentIds = await _getUserCommentIds(userId);
+    mapCommentIds.add(mapCommentId);
+
     await usersCollection
         .doc(userId)
         .update({'map_comment_ids': mapCommentIds});
 
-    await mapCommentsCollection.doc(mapComment.id).set(mapComment.toJson());
+    final List<String> mapCommentFilesUrl = <String>[];
+
+    for (var i = 0; i < files.length; i++) {
+      final file = files[i];
+      final ext = file.path.split('.').last;
+
+      final fileName = IdGeneratorService.generateFileName(userId, i, ext);
+
+      await storage.ref('files/$fileName').putFile(files[i]);
+      final fileUrl = await storage.ref('files/$fileName').getDownloadURL();
+      mapCommentFilesUrl.add(fileUrl);
+    }
+
+    final createTimeTs = DateTime.now().millisecondsSinceEpoch;
+
+    final mapComment = MapComment(
+      id: mapCommentId,
+      userId: userId,
+      comment: mapCommentData.text,
+      latitude: mapCommentData.latitude,
+      longitude: mapCommentData.longitude,
+      category: mapCommentData.category,
+      createdTs: createTimeTs,
+      filesUrl: mapCommentFilesUrl,
+    );
+
+    await mapCommentsCollection.doc(mapCommentId).set(mapComment.toJson());
   }
 }

@@ -15,6 +15,10 @@ MapComment _$MapCommentFromJson(Map<String, dynamic> json) => MapComment(
       createdTs: json['created_ts'] as int?,
       category: $enumDecodeNullable(_$CategoryEnumMap, json['category']) ??
           Category.other,
+      filesUrl: (json['files_url'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
     );
 
 Map<String, dynamic> _$MapCommentToJson(MapComment instance) =>
@@ -26,6 +30,7 @@ Map<String, dynamic> _$MapCommentToJson(MapComment instance) =>
       'id': instance.id,
       'category': _$CategoryEnumMap[instance.category]!,
       'created_ts': instance.createdTs,
+      'files_url': instance.filesUrl,
     };
 
 const _$CategoryEnumMap = {

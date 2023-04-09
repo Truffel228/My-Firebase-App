@@ -160,30 +160,22 @@ class AddMapCommentBloc extends Bloc<AddMapCommentEvent, AddMapCommentState> {
     AddMapCommentSaveEvent event,
     Emitter<AddMapCommentState> emit,
   ) async {
+    final files = state.attachments.map((e) => e.file).toList();
+
     try {
-      //TODO: Create Repository for next logic
-      const uuid = Uuid();
 
-      final firstPartId = event.userId.substring(0, 5);
-      final secondPartId = Random().nextInt(1000).toString().padLeft(3, '0');
-      final thirdPartId = DateTime.now().toIso8601String();
-      final mapCommentId = '$firstPartId$secondPartId$thirdPartId';
-
-      final createTimeTs = DateTime.now().millisecondsSinceEpoch;
-      final mapComment = MapComment(
-        id: mapCommentId,
-        comment: event.content,
+      final mapCommentData = MapCommentData(
+        text: event.text,
         latitude: event.latitude,
         longitude: event.longitude,
-        userId: event.userId,
         category: event.category,
-        createdTs: createTimeTs,
       );
 
       //TODO: Сделать метод для сохранения коментария в бд
       await _databaseService.saveMapComment(
-        mapComment: mapComment,
+        mapCommentData: mapCommentData,
         userId: event.userId,
+        files: files,
       );
 
       emit(state.success());
@@ -191,4 +183,18 @@ class AddMapCommentBloc extends Bloc<AddMapCommentEvent, AddMapCommentState> {
       print(e);
     }
   }
+}
+
+class MapCommentData {
+  const MapCommentData({
+    required this.text,
+    required this.category,
+    required this.latitude,
+    required this.longitude,
+  });
+
+  final String text;
+  final Category category;
+  final double latitude;
+  final double longitude;
 }

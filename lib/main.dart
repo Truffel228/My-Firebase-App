@@ -17,6 +17,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 
+import 'screens/add_map_comment/bloc/add_map_comment_bloc.dart';
 import 'wrappers/connection/bloc/connection_wrapper_bloc.dart';
 import 'wrappers/connection/connection_wrapper.dart';
 
@@ -47,6 +48,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider(
+          create: (context) => AddMapCommentBloc(
+            databaseService: locator<DatabaseServiceInterface>(),
+            imagePickerService: locator<ImagePickerService>(),
+          ),
+        ),
         BlocProvider(create: (context) => ConnectionWrapperBloc()),
         BlocProvider(
           create: (context) =>

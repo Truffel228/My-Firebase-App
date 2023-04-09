@@ -32,19 +32,19 @@ class AddMapCommentAttachmentDelete extends AddMapCommentEvent {
 
 class AddMapCommentSaveEvent extends AddMapCommentEvent {
   const AddMapCommentSaveEvent({
-    required this.content,
+    required this.text,
     required this.userId,
     required this.latitude,
     required this.longitude,
     required this.category,
   });
 
-  final String content;
+  final String text;
   final String userId;
   final double latitude;
   final double longitude;
   final Category category;
 
   @override
-  List<Object?> get props => [content, latitude, longitude, category, userId];
+  List<Object?> get props => [text, latitude, longitude, category, userId];
 }

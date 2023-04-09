@@ -14,6 +14,7 @@ class MapComment {
     required this.id,
     this.createdTs,
     this.category = Category.other,
+    this.filesUrl = const [],
   });
 
   final String comment;
@@ -23,6 +24,7 @@ class MapComment {
   final String id;
   final Category category;
   final int? createdTs;
+  final List<String> filesUrl;
 
   String? get creationTime {
     if (createdTs == null) {
