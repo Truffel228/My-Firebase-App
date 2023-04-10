@@ -1,4 +1,4 @@
-import 'package:fire_base_app/screens/add_map_comment/add_map_comment_screen.dart';
+import 'package:fire_base_app/core/enums/enums.dart';
 import 'package:fire_base_app/screens/add_map_comment/bloc/add_map_comment_bloc.dart';
 import 'package:fire_base_app/screens/add_map_comment/widgets/attachments/add_attachment_widget.dart';
 import 'package:fire_base_app/screens/add_map_comment/widgets/attachments/attachment_widget.dart';

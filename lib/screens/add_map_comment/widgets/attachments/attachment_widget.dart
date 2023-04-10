@@ -1,9 +1,9 @@
-import 'package:fire_base_app/screens/add_map_comment/add_map_comment_screen.dart';
 import 'package:fire_base_app/screens/add_map_comment/bloc/add_map_comment_bloc.dart';
 import 'package:fire_base_app/screens/add_map_comment/widgets/attachments/attachment_cross_icon.dart';
 import 'package:fire_base_app/shared/style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fire_base_app/core/enums/enums.dart';
 
 class AttachmentWidget extends StatelessWidget {
   const AttachmentWidget({

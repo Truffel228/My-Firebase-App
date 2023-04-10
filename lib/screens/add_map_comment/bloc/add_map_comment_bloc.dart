@@ -1,17 +1,14 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:fire_base_app/models/map_comment/map_comment.dart';
-import 'package:fire_base_app/screens/add_map_comment/add_map_comment_screen.dart';
+import 'package:fire_base_app/core/enums/enums.dart';
 import 'package:fire_base_app/services/database/database_service_interface.dart';
 import 'package:fire_base_app/services/image_picker_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_video_info/flutter_video_info.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:uuid/uuid.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
 part 'add_map_comment_event.dart';

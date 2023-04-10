@@ -1,5 +1,5 @@
+import 'package:fire_base_app/core/enums/enums.dart';
 import 'package:fire_base_app/models/app_user/app_user.dart';
-import 'package:fire_base_app/models/map_comment/map_comment.dart';
 import 'package:fire_base_app/screens/add_map_comment/bloc/add_map_comment_bloc.dart';
 import 'package:fire_base_app/screens/add_map_comment/widgets/widgets.dart';
 import 'package:fire_base_app/screens/map/bloc/map_bloc.dart';
@@ -176,7 +176,4 @@ class _AddMapCommentFormState extends State<AddMapCommentForm> {
   void _onCancelTap() => Navigator.of(context).pop();
 }
 
-enum FileType {
-  image,
-  video,
-}
+

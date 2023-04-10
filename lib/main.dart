@@ -73,7 +73,7 @@ class MyApp extends StatelessWidget {
         child: MaterialApp(
           theme: lightTheme,
           title: 'Flutter Demo',
-          home: ConnectionWrapper(child: LogHomeWrapper()),
+          home: const ConnectionWrapper(child: LogHomeWrapper()),
           routes: Routes.routes,
         ),
       ),

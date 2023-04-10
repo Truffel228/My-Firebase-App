@@ -1,9 +1,9 @@
+import 'package:fire_base_app/core/enums/enums.dart';
 import 'package:fire_base_app/models/map_comment/map_comment.dart';
 import 'package:fire_base_app/models/user_model/user_model/user_model.dart';
 import 'package:fire_base_app/screens/map_comment/bloc/map_comment_screen_bloc.dart';
 import 'package:fire_base_app/screens/map_comment/widgets/widgets.dart';
 import 'package:fire_base_app/shared/router.dart';
-import 'package:fire_base_app/shared/style.dart';
 import 'package:fire_base_app/shared/widgets/app_text_field.dart';
 import 'package:fire_base_app/shared/widgets/loading_widget.dart';
 import 'package:flutter/gestures.dart';
@@ -82,9 +82,9 @@ class _MapCommentScreenState extends State<MapCommentScreen> {
         }
         if (state is MapCommentScreenLoading) {
           //TODO: Add shimmer
-          return Center(child: LoadingWidget());
+          return const Center(child: LoadingWidget());
         }
-        return Text('error');
+        return const Text('error');
       },
     );
   }
