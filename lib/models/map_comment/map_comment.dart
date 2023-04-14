@@ -1,11 +1,14 @@
+import 'package:fire_base_app/core/enums/enums.dart';
+import 'package:fire_base_app/models/file_data/file_data.dart';
 import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-import '../../core/enums/enums.dart';
-
 part 'map_comment.g.dart';
 
-@JsonSerializable(fieldRename: FieldRename.snake)
+@JsonSerializable(
+  fieldRename: FieldRename.snake,
+  explicitToJson: true,
+)
 class MapComment {
   const MapComment({
     required this.userId,
@@ -15,7 +18,7 @@ class MapComment {
     required this.id,
     this.createdTs,
     this.category = Category.other,
-    this.filesUrl = const [],
+    this.files = const [],
   });
 
   final String comment;
@@ -25,7 +28,7 @@ class MapComment {
   final String id;
   final Category category;
   final int? createdTs;
-  final List<String> filesUrl;
+  final List<FileData> files;
 
   String? get creationTime {
     if (createdTs == null) {
@@ -39,5 +42,3 @@ class MapComment {
       _$MapCommentFromJson(json);
   Map<String, dynamic> toJson() => _$MapCommentToJson(this);
 }
-
-

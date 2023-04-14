@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:fire_base_app/core/entities/attachment.dart';
 import 'package:fire_base_app/models/map_comment/map_comment.dart';
 import 'package:fire_base_app/models/user_model/user_model/user_model.dart';
 import 'package:fire_base_app/models/user_model/user_model_api/user_model_api.dart';
@@ -16,7 +17,7 @@ abstract class DatabaseServiceInterface {
   Future<void> saveMapComment({
     required MapCommentData mapCommentData,
     required String userId,
-    required List<File> files,
+    required List<Attachment> attachments,
   });
   Future<List<MapComment>> getAllMapComments();
   Future<void> deleteMapComment(String userId, String commentId);

@@ -1,3 +1,4 @@
+import 'package:fire_base_app/core/entities/entities.dart';
 import 'package:fire_base_app/screens/add_map_comment/bloc/add_map_comment_bloc.dart';
 import 'package:fire_base_app/screens/add_map_comment/widgets/attachments/attachment_cross_icon.dart';
 import 'package:fire_base_app/shared/style.dart';

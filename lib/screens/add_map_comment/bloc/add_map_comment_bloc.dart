@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:fire_base_app/core/entities/entities.dart';
 import 'package:fire_base_app/core/enums/enums.dart';
 import 'package:fire_base_app/services/database/database_service_interface.dart';
 import 'package:fire_base_app/services/image_picker_service.dart';
@@ -172,8 +173,6 @@ class AddMapCommentBloc extends Bloc<AddMapCommentEvent, AddMapCommentState> {
       currentState.copyWith(isLoading: true),
     );
 
-    final files = state.attachments.map((e) => e.file).toList();
-
     try {
       final mapCommentData = MapCommentData(
         text: event.text,
@@ -185,7 +184,7 @@ class AddMapCommentBloc extends Bloc<AddMapCommentEvent, AddMapCommentState> {
       await _databaseService.saveMapComment(
         mapCommentData: mapCommentData,
         userId: event.userId,
-        files: files,
+        attachments: currentState.attachments,
       );
 
       emit(state.success());

@@ -1,6 +1,6 @@
 import 'package:fire_base_app/models/app_user/app_user.dart';
 import 'package:fire_base_app/models/map_comment/map_comment.dart';
-import 'package:fire_base_app/screens/add_map_comment/add_map_comment_screen.dart';
+import 'package:fire_base_app/screens/add_map_comment/add_map_comment_form.dart';
 import 'package:fire_base_app/screens/map/bloc/map_bloc.dart';
 import 'package:fire_base_app/screens/map/widgets/comment_button.dart';
 import 'package:fire_base_app/screens/map/widgets/map_button.dart';
@@ -282,8 +282,6 @@ class _MapWidgetState extends State<MapWidget> {
       isScrollControlled: true,
       enableDrag: false,
       builder: (context) => AddMapCommentForm(
-
-
         controller: _commentController,
         latitude: _mapController.center.latitude,
         longitude: _mapController.center.longitude,

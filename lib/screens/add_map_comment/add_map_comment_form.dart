@@ -175,5 +175,3 @@ class _AddMapCommentFormState extends State<AddMapCommentForm> {
 
   void _onCancelTap() => Navigator.of(context).pop();
 }
-
-

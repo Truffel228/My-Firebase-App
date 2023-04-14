@@ -2,6 +2,8 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fire_base_app/core/entities/attachment.dart';
+import 'package:fire_base_app/models/file_data/file_data.dart';
 import 'package:fire_base_app/models/map_comment/map_comment.dart';
 import 'package:fire_base_app/models/user_model/user_model/user_model.dart';
 import 'package:fire_base_app/models/user_model/user_model_api/user_model_api.dart';
@@ -163,9 +165,8 @@ class DatabaseService extends DatabaseServiceInterface {
   Future<void> saveMapComment({
     required MapCommentData mapCommentData,
     required String userId,
-    required List<File> files,
+    required List<Attachment> attachments,
   }) async {
-    //TODO: Separated service
     final mapCommentId = IdGeneratorService.generateMapCommentId(userId);
 
     /// Add map comment id to user
@@ -176,17 +177,23 @@ class DatabaseService extends DatabaseServiceInterface {
         .doc(userId)
         .update({'map_comment_ids': mapCommentIds});
 
-    final List<String> mapCommentFilesUrl = <String>[];
+    final List<FileData> files = <FileData>[];
 
-    for (var i = 0; i < files.length; i++) {
-      final file = files[i];
-      final ext = file.path.split('.').last;
+    for (var i = 0; i < attachments.length; i++) {
+      final attachment = attachments[i];
+      final ext = attachment.file.path.split('.').last;
 
       final fileName = IdGeneratorService.generateFileName(userId, i, ext);
 
-      await storage.ref('files/$fileName').putFile(files[i]);
+      await storage.ref('files/$fileName').putFile(attachment.file);
       final fileUrl = await storage.ref('files/$fileName').getDownloadURL();
-      mapCommentFilesUrl.add(fileUrl);
+
+      final file = FileData(
+        fileType: attachment.fileType,
+        fileUrl: fileUrl,
+      );
+
+      files.add(file);
     }
 
     final createTimeTs = DateTime.now().millisecondsSinceEpoch;
@@ -199,9 +206,13 @@ class DatabaseService extends DatabaseServiceInterface {
       longitude: mapCommentData.longitude,
       category: mapCommentData.category,
       createdTs: createTimeTs,
-      filesUrl: mapCommentFilesUrl,
+      files: files,
     );
 
-    await mapCommentsCollection.doc(mapCommentId).set(mapComment.toJson());
+    try {
+      await mapCommentsCollection.doc(mapCommentId).set(mapComment.toJson());
+    } catch (e) {
+      print(e);
+    }
   }
 }

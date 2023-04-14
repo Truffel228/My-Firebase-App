@@ -41,19 +41,6 @@ class AddMapCommentAddFileSuccess extends AddMapCommentState {
   }) : super(attachments: attachments, isLoading: isLoading);
 }
 
-class Attachment {
-  const Attachment(
-    this.file,
-    this.fileType, {
-    this.videoPreview,
-    this.videoDurationSec,
-  });
-  final File file;
-  final FileType fileType;
-  final File? videoPreview;
-  final int? videoDurationSec;
-}
-
 class AddMapCommentSuccess extends AddMapCommentState {
   const AddMapCommentSuccess({
     List<Attachment> attachments = const [],
