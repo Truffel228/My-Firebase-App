@@ -1,7 +1,8 @@
-import 'package:fire_base_app/core/entities/entities.dart';
-import 'package:fire_base_app/core/enums/enums.dart';
+
 import 'package:fire_base_app/screens/add_map_comment/widgets/attachments/add_attachment_widget.dart';
 import 'package:fire_base_app/screens/add_map_comment/widgets/attachments/attachment_widget.dart';
+import 'package:fire_base_app/shared/entities/entities.dart';
+import 'package:fire_base_app/shared/enums/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 

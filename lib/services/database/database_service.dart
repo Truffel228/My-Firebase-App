@@ -2,7 +2,6 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:fire_base_app/core/entities/attachment.dart';
 import 'package:fire_base_app/models/file_data/file_data.dart';
 import 'package:fire_base_app/models/map_comment/map_comment.dart';
 import 'package:fire_base_app/models/user_model/user_model/user_model.dart';
@@ -10,6 +9,7 @@ import 'package:fire_base_app/models/user_model/user_model_api/user_model_api.da
 import 'package:fire_base_app/screens/add_map_comment/bloc/add_map_comment_bloc.dart';
 import 'package:fire_base_app/services/database/database_service_interface.dart';
 import 'package:fire_base_app/services/id_generator_service.dart';
+import 'package:fire_base_app/shared/entities/entities.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -112,6 +112,16 @@ class DatabaseService extends DatabaseServiceInterface {
       print(e);
       throw Exception(e);
     }
+  }
+
+  @override
+  Future<MapComment> getMapComment(String id) async {
+    final snapshot = await mapCommentsCollection.doc(id).get();
+    final mapCommentData = snapshot.data();
+    final mapComment =
+        MapComment.fromJson(mapCommentData as Map<String, dynamic>);
+
+    return mapComment;
   }
 
   @override

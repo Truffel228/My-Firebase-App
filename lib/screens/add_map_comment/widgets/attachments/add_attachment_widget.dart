@@ -1,5 +1,5 @@
-import 'package:fire_base_app/core/enums/enums.dart';
 import 'package:fire_base_app/screens/add_map_comment/bloc/add_map_comment_bloc.dart';
+import 'package:fire_base_app/shared/enums/enums.dart';
 import 'package:fire_base_app/shared/style.dart';
 import 'package:fire_base_app/shared/widgets/pick_file_bottom_sheet.dart';
 import 'package:flutter/material.dart';

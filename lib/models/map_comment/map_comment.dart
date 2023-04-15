@@ -1,5 +1,5 @@
-import 'package:fire_base_app/core/enums/enums.dart';
 import 'package:fire_base_app/models/file_data/file_data.dart';
+import 'package:fire_base_app/shared/enums/enums.dart';
 import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
 

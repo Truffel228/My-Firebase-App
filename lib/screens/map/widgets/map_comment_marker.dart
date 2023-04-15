@@ -40,7 +40,8 @@ class MapCommentMarker extends StatelessWidget {
       isScrollControlled: true,
       context: context,
       builder: (BuildContext context) => MapCommentScreen(
-        mapComment: mapComment,
+        mapCommentId: mapComment.id,
+        userId: mapComment.userId,
       ),
     );
   }

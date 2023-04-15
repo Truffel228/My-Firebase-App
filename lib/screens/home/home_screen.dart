@@ -21,22 +21,22 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final AuthServiceInterface _auth = locator.get<AuthServiceInterface>();
   int currentIndex = 0;
-  final screens = [ProfileScreen(), MapScreen()];
+  final screens = [const ProfileScreen(), const MapScreen()];
 
   @override
   Widget build(BuildContext context) {
-    final appUser = Provider.of<AppUser?>(context);
-
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text('Mapews'),
         actions: [
-          AppButton(
-            onTap: () async {
-              _auth.signOut();
-            },
-            title: 'Sign Out',
+          Center(
+            child: AppButton(
+              onTap: () async {
+                _auth.signOut();
+              },
+              title: 'Sign Out',
+            ),
           ),
         ],
       ),

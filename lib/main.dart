@@ -1,8 +1,9 @@
 import 'package:fire_base_app/screens/map/bloc/map_bloc.dart';
-import 'package:fire_base_app/screens/map_comment/bloc/map_comment_screen_bloc.dart';
+import 'package:fire_base_app/screens/map_comment/bloc/map_comment_bloc.dart';
 import 'package:fire_base_app/screens/profile/bloc/profile/profile_bloc.dart';
 import 'package:fire_base_app/services/auth/auth_service_interface.dart';
 import 'package:fire_base_app/services/database/database_service_interface.dart';
+import 'package:fire_base_app/services/file_helper/file_helper_service_interface.dart';
 import 'package:fire_base_app/services/geolocation/geolocation_service_interface.dart';
 import 'package:fire_base_app/services/image_picker_service.dart';
 import 'package:fire_base_app/shared/app_bloc_observer.dart';
@@ -43,6 +44,8 @@ class MyApp extends StatelessWidget {
       locator.get<DatabaseServiceInterface>();
   final GeolocationServiceInterface _geoService =
       locator.get<GeolocationServiceInterface>();
+  final FileHelperServiceInterface fileHelper =
+      locator.get<FileHelperServiceInterface>();
 
   @override
   Widget build(BuildContext context) {
@@ -56,8 +59,10 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(create: (context) => ConnectionWrapperBloc()),
         BlocProvider(
-          create: (context) =>
-              MapCommentScreenBloc(databaseService: _databaseService),
+          create: (context) => MapCommentBloc(
+            databaseService: _databaseService,
+            fileHelper: fileHelper,
+          ),
         ),
         BlocProvider(
           create: (context) => ProfileBloc(databaseService: _databaseService),

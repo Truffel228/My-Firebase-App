@@ -3,8 +3,8 @@ import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:fire_base_app/core/entities/entities.dart';
-import 'package:fire_base_app/core/enums/enums.dart';
+import 'package:fire_base_app/shared/entities/attachment.dart';
+import 'package:fire_base_app/shared/enums/enums.dart';
 import 'package:fire_base_app/services/database/database_service_interface.dart';
 import 'package:fire_base_app/services/image_picker_service.dart';
 import 'package:flutter/material.dart';

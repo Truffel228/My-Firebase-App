@@ -1,4 +1,5 @@
-import 'package:fire_base_app/core/enums/enums.dart';
+
+import 'package:fire_base_app/shared/enums/enums.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'file_data.g.dart';
