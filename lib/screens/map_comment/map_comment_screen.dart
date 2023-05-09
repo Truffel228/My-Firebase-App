@@ -5,6 +5,7 @@ import 'package:fire_base_app/shared/enums/enums.dart';
 import 'package:fire_base_app/shared/router.dart';
 import 'package:fire_base_app/shared/widgets/app_text_field.dart';
 import 'package:fire_base_app/shared/widgets/loading_widget.dart';
+import 'package:fire_base_app/shared/widgets/widgets.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -123,10 +124,9 @@ class _MapCommentScreenState extends State<MapCommentScreen> {
           );
         }
         if (state is MapCommentLoading) {
-          //TODO: Add shimmer
-          return const Center(child: LoadingWidget());
+          return const MapCommentShimmer();
         }
-        return const Text('error');
+        return const Text('Error');
       },
     );
   }

@@ -4,3 +4,5 @@ export 'loading_widget.dart';
 export 'map_comment_list_item.dart';
 export 'pick_file_bottom_sheet.dart';
 export 'video_duration_chip.dart';
+export 'app_shimmer.dart';
+export 'profile_avatar.dart';

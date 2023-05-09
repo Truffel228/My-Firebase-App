@@ -16,7 +16,9 @@ class FileHelperService implements FileHelperServiceInterface {
     ByteData byteData = ByteData.view(buffer);
     var tempDir = await getTemporaryDirectory();
 
-    File file = await File('${tempDir.path}/img').writeAsBytes(
+    final fileName = '${DateTime.now().millisecondsSinceEpoch}img';
+
+    File file = await File('${tempDir.path}/$fileName').writeAsBytes(
         buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
 
     return file;

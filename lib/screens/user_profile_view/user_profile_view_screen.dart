@@ -1,6 +1,7 @@
 import 'package:fire_base_app/models/user_model/user_model/user_model.dart';
 import 'package:fire_base_app/shared/widgets/map_comment_list_item.dart';
 import 'package:fire_base_app/shared/widgets/app_text_field.dart';
+import 'package:fire_base_app/shared/widgets/profile_avatar.dart';
 import 'package:flutter/material.dart';
 
 class UserProfileScreen extends StatelessWidget {
@@ -19,8 +20,8 @@ class UserProfileScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const SizedBox(height: 20),
-          CircleAvatar(
-            minRadius: MediaQuery.of(context).size.width * 0.2,
+          ProfileAvatar(
+            avatarUrl: userData.profileImageUrl,
           ),
           const SizedBox(height: 20),
           Row(

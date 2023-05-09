@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:fire_base_app/shared/entities/entities.dart';
 import 'package:fire_base_app/shared/router.dart';
 import 'package:fire_base_app/shared/style.dart';
@@ -25,7 +27,7 @@ class MedialAttachmentVideos extends StatelessWidget {
           final video = videos[index];
 
           return InkWell(
-            onTap: () => _onImageTap(context, videos[index].fileUrl),
+            onTap: () => _onVideoTap(context, videos[index].file),
             child: Hero(
               tag: 'tag',
               child: Container(
@@ -64,9 +66,13 @@ class MedialAttachmentVideos extends StatelessWidget {
     );
   }
 
-  void _onImageTap(BuildContext context, String imageUrl) =>
-      Navigator.of(context).pushNamed(
-        Routes.imageView,
-        arguments: imageUrl,
-      );
+  void _onVideoTap(BuildContext context, File? videoFile) {
+    if (videoFile == null) {
+      return;
+    }
+    Navigator.of(context).pushNamed(
+      Routes.videoView,
+      arguments: videoFile,
+    );
+  }
 }

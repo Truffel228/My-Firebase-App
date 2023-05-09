@@ -34,112 +34,115 @@ class _SignInScreenState extends State<SignInScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Sign In'),
-        actions: [
-          Center(
-            child: AppButton(
-              title: 'Sign Up',
-              onTap: widget.toogleScreen,
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Sign In'),
+          actions: [
+            Center(
+              child: AppButton(
+                title: 'Sign Up',
+                onTap: widget.toogleScreen,
+              ),
             ),
-          ),
-        ],
-      ),
-      body: SizedBox.expand(
-        child: Form(
-          key: _formKey,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 50),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(height: 20),
-                AppTextField(
-                  validator: _emailValidator,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.allow(emailRegExp),
-                  ],
-                  onChanged: (_) {
-                    _resetState();
-                  },
-                  hintText: 'Email',
-                  controller: _emailController,
-                ),
-                const SizedBox(height: 20),
-                AppTextField(
-                  validator: _passwordValidator,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.allow(passwordRegExp),
-                  ],
-                  onChanged: (_) {
-                    _resetState();
-                  },
-                  hintText: 'Password',
-                  controller: _passwordController,
-                ),
-                const SizedBox(height: 20),
-                if (_isWrongPassword)
-                  Text(
-                    'Wrong password',
-                    style: theme.textTheme.bodyText1!
-                        .copyWith(color: theme.errorColor),
+          ],
+        ),
+        body: SizedBox.expand(
+          child: Form(
+            key: _formKey,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 50),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 20),
+                  AppTextField(
+                    validator: _emailValidator,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(emailRegExp),
+                    ],
+                    onChanged: (_) {
+                      _resetState();
+                    },
+                    hintText: 'Email',
+                    controller: _emailController,
                   ),
-                if (!_isUserFound)
-                  Text(
-                    'User with this email wasn\'t found',
-                    style: theme.textTheme.bodyText1!
-                        .copyWith(color: theme.errorColor),
+                  const SizedBox(height: 20),
+                  AppTextField(
+                    validator: _passwordValidator,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(passwordRegExp),
+                    ],
+                    onChanged: (_) {
+                      _resetState();
+                    },
+                    hintText: 'Password',
+                    controller: _passwordController,
                   ),
-                if (_isFailed)
-                  Text(
-                    _failedText,
-                    style: theme.textTheme.bodyText1!
-                        .copyWith(color: theme.errorColor),
-                  ),
-                const SizedBox(height: 40),
-                _isLoading
-                    ? const LoadingWidget()
-                    : TextButton(
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.resolveWith<Color>(
-                            // As you said you dont need elevation. I'm returning 0 in both case
-                            (Set<MaterialState> states) {
-                              if (states.contains(MaterialState.disabled)) {
-                                return theme.primaryColor;
-                              }
-                              return theme
-                                  .primaryColor; // Defer to the widget's default.
-                            },
+                  const SizedBox(height: 20),
+                  if (_isWrongPassword)
+                    Text(
+                      'Wrong password',
+                      style: theme.textTheme.bodyText1!
+                          .copyWith(color: theme.errorColor),
+                    ),
+                  if (!_isUserFound)
+                    Text(
+                      'User with this email wasn\'t found',
+                      style: theme.textTheme.bodyText1!
+                          .copyWith(color: theme.errorColor),
+                    ),
+                  if (_isFailed)
+                    Text(
+                      _failedText,
+                      style: theme.textTheme.bodyText1!
+                          .copyWith(color: theme.errorColor),
+                    ),
+                  const SizedBox(height: 40),
+                  _isLoading
+                      ? const LoadingWidget()
+                      : TextButton(
+                          style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.resolveWith<Color>(
+                              // As you said you dont need elevation. I'm returning 0 in both case
+                              (Set<MaterialState> states) {
+                                if (states.contains(MaterialState.disabled)) {
+                                  return theme.primaryColor;
+                                }
+                                return theme
+                                    .primaryColor; // Defer to the widget's default.
+                              },
+                            ),
+                          ),
+                          onPressed: _signIn,
+                          child: Text(
+                            'Sign In',
+                            style: TextStyle(color: Colors.white),
                           ),
                         ),
-                        onPressed: _signIn,
-                        child: Text(
-                          'Sign In',
-                          style: TextStyle(color: Colors.white),
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: 'Try app by logging in ',
+                          style: TextStyle(color: Colors.black),
                         ),
-                      ),
-                RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: 'Try app by logging in ',
-                        style: TextStyle(color: Colors.black),
-                      ),
-                      TextSpan(
-                        text: 'Anonymously',
-                        style: TextStyle(
-                            color: theme.primaryColor,
-                            fontWeight: FontWeight.bold),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = _authSignInAnon,
-                      ),
-                    ],
+                        TextSpan(
+                          text: 'Anonymously',
+                          style: TextStyle(
+                              color: theme.primaryColor,
+                              fontWeight: FontWeight.bold),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = _authSignInAnon,
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

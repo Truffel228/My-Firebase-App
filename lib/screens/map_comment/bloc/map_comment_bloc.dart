@@ -38,19 +38,20 @@ class MapCommentBloc extends Bloc<MapCommentEvent, MapCommentState> {
       final mapComment =
           await _databaseService.getMapComment(event.mapCommentId);
 
-      final images = mapComment.files
-          .where((e) => e.fileType == FileType.image)
-          .map((e) => MediaAttachment(e.fileUrl, e.fileType))
-          .toList();
       emit(
         MapCommentLoaded(
           mapComment: mapComment,
           userData: userData,
-          images: [],
-          videos: [],
+          images: const [],
+          videos: const [],
           mediaAttachmentLoading: true,
         ),
       );
+
+      final images = mapComment.files
+          .where((e) => e.fileType == FileType.image)
+          .map((e) => MediaAttachment(e.fileUrl, e.fileType))
+          .toList();
 
       final List<MediaAttachment> videos = [];
       final videoFiles =
@@ -69,7 +70,7 @@ class MapCommentBloc extends Bloc<MapCommentEvent, MapCommentState> {
 
         final thumbnailPath = await VideoThumbnail.thumbnailFile(
           //Not working with videoFile.path
-          video: videoUrl,
+          video: video.fileUrl,
           imageFormat: ImageFormat.JPEG,
           maxWidth: 125,
           quality: 100,
@@ -80,6 +81,7 @@ class MapCommentBloc extends Bloc<MapCommentEvent, MapCommentState> {
         final videoMediaAttachment = MediaAttachment(
           videoUrl,
           video.fileType,
+          file: videoFile,
           videoDurationSec: videoDurationInt,
           videoPreview: videoThumbnail,
         );
@@ -96,7 +98,7 @@ class MapCommentBloc extends Bloc<MapCommentEvent, MapCommentState> {
           mediaAttachmentLoading: false,
         ),
       );
-    } catch (e) {
+    } catch (e, st) {
       print(e);
     }
   }
