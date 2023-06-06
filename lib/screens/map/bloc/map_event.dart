@@ -53,3 +53,11 @@ class MapCameraPositionChangedEvent extends MapEvent {
   @override
   List<Object?> get props => [cameraPosition];
 }
+
+class MapSetFilter extends MapEvent {
+  const MapSetFilter(this.filter);
+  final FilterEntity filter;
+
+  @override
+  List<Object?> get props => [filter];
+}

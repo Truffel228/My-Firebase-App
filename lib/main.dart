@@ -76,6 +76,7 @@ class MyApp extends StatelessWidget {
         initialData: null,
         value: _authService.onAuthStateChanged,
         child: MaterialApp(
+          debugShowCheckedModeBanner: false,
           theme: lightTheme,
           title: 'Flutter Demo',
           home: const ConnectionWrapper(child: LogHomeWrapper()),

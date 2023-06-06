@@ -6,7 +6,6 @@ import 'package:fire_base_app/services/database/database_service_interface.dart'
 import 'package:fire_base_app/services/image_picker_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 part 'profile_image_event.dart';
 part 'profile_image_state.dart';

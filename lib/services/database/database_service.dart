@@ -8,8 +8,10 @@ import 'package:fire_base_app/models/user_model/user_model/user_model.dart';
 import 'package:fire_base_app/models/user_model/user_model_api/user_model_api.dart';
 import 'package:fire_base_app/screens/add_map_comment/bloc/add_map_comment_bloc.dart';
 import 'package:fire_base_app/services/database/database_service_interface.dart';
+import 'package:fire_base_app/services/file_helper/file_helper_service_interface.dart';
 import 'package:fire_base_app/services/id_generator_service.dart';
 import 'package:fire_base_app/shared/entities/entities.dart';
+import 'package:fire_base_app/shared/enums/file_type.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -20,6 +22,12 @@ class DatabaseService extends DatabaseServiceInterface {
   final CollectionReference mapCommentsCollection =
       FirebaseFirestore.instance.collection('mapComments');
   final storage = FirebaseStorage.instance;
+
+  final FileHelperServiceInterface _fileHelperService;
+
+  DatabaseService({
+    required FileHelperServiceInterface fileHelperService,
+  }) : _fileHelperService = fileHelperService;
 
   @override
   Future<void> updateUserData(
@@ -74,22 +82,12 @@ class DatabaseService extends DatabaseServiceInterface {
       final mapComment = mapCommentDataData as Map<String, dynamic>;
       mapComments.add(MapComment.fromJson(mapComment));
     }
-    String? profileImageUrl;
-    try {
-      if (userDataApi.profileImage?.isNotEmpty ?? false) {
-        profileImageUrl = await storage
-            .ref('profile_image/${userDataApi.profileImage}')
-            .getDownloadURL();
-      }
-    } catch (e) {
-      print(e);
-    }
 
     return UserModel(
       name: userDataApi.name,
       age: userDataApi.age,
       mapComments: mapComments,
-      profileImageUrl: profileImageUrl,
+      profileImageUrl: userDataApi.profileImage,
     );
   }
 
@@ -127,6 +125,15 @@ class DatabaseService extends DatabaseServiceInterface {
   @override
   Future<void> deleteMapComment(String userId, String commentId) async {
     try {
+      final comment = await mapCommentsCollection.doc(commentId).get();
+      final files = (comment.get('files') as List<dynamic>)
+          .map((e) => FileData.fromJson(e))
+          .toList();
+      for (var file in files) {
+        final ref = storage.refFromURL(file.fileUrl);
+        await storage.ref('files/${ref.name}').delete();
+      }
+
       await mapCommentsCollection.doc(commentId).delete();
       final userDoc = await usersCollection.doc(userId).get();
       var mapCommentIdList = userDoc.get('map_comment_ids') as List<dynamic>;
@@ -149,8 +156,11 @@ class DatabaseService extends DatabaseServiceInterface {
 
       await storage.ref('profile_image/$fileName').putFile(fileToUpload);
 
+      final userPhotoUrl =
+          await storage.ref('profile_image/$fileName').getDownloadURL();
+
       await usersCollection.doc(uid).update(
-        {'profile_image': fileName},
+        {'profile_image': userPhotoUrl},
       );
     } catch (e) {
       print(e);
@@ -193,9 +203,22 @@ class DatabaseService extends DatabaseServiceInterface {
       final attachment = attachments[i];
       final ext = attachment.file.path.split('.').last;
 
+      final File? compressedFile;
+
+      switch (attachment.fileType) {
+        case FileType.image:
+          compressedFile =
+              await _fileHelperService.compressImage(attachment.file);
+          break;
+        case FileType.video:
+          compressedFile =
+              await _fileHelperService.compressVideo(attachment.file);
+          break;
+      }
+
       final fileName = IdGeneratorService.generateFileName(userId, i, ext);
 
-      await storage.ref('files/$fileName').putFile(attachment.file);
+      await storage.ref('files/$fileName').putFile(compressedFile);
       final fileUrl = await storage.ref('files/$fileName').getDownloadURL();
 
       final file = FileData(
@@ -219,10 +242,6 @@ class DatabaseService extends DatabaseServiceInterface {
       files: files,
     );
 
-    try {
-      await mapCommentsCollection.doc(mapCommentId).set(mapComment.toJson());
-    } catch (e) {
-      print(e);
-    }
+    await mapCommentsCollection.doc(mapCommentId).set(mapComment.toJson());
   }
 }

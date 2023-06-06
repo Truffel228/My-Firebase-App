@@ -74,6 +74,7 @@ class _MapScreenState extends State<MapScreen> {
             isCommentSaving: state.isCommentSaving,
             mapComments: state.mapComments,
             userPosition: state.userPosition,
+            filter: state.filter,
           );
         }
         return const Center(

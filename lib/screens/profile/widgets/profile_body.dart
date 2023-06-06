@@ -86,9 +86,11 @@ class _ProfileBodyState extends State<ProfileBody> {
           const SizedBox(height: 20),
           widget.isSaving
               ? const LoadingWidget()
-              : AppButton(
-                  onTap: _onSave,
-                  title: 'Save',
+              : UnconstrainedBox(
+                  child: AppButton(
+                    onTap: _onSave,
+                    title: 'Save',
+                  ),
                 ),
           const SizedBox(height: 20),
           widget.userData.mapComments.isNotEmpty

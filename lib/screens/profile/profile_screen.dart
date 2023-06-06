@@ -76,6 +76,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             );
           }
           if (state is ProfileCommentDeleteSuccess) {
+            ScaffoldMessenger.of(context).removeCurrentSnackBar();
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text('Comment has been deleted'),

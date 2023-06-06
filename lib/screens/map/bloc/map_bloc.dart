@@ -7,6 +7,9 @@ import 'package:fire_base_app/models/map_comment/map_comment.dart';
 import 'package:fire_base_app/services/database/database_service_interface.dart';
 import 'package:fire_base_app/services/geolocation/geolocation_service.dart';
 import 'package:fire_base_app/services/geolocation/geolocation_service_interface.dart';
+import 'package:fire_base_app/shared/entities/entities.dart';
+import 'package:fire_base_app/shared/enums/enums.dart';
+import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:meta/meta.dart';
 import 'package:uuid/uuid.dart';
@@ -27,7 +30,17 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       required DatabaseServiceInterface databaseService})
       : _geoService = geoService,
         _databaseService = databaseService,
-        super(MapLoading()) {
+        super(
+          MapLoading(
+            filter: FilterEntity(
+              category: Category.all,
+              dateTimeRange: DateTimeRange(
+                start: DateTime.now(),
+                end: DateTime.now(),
+              ),
+            ),
+          ),
+        ) {
     /// Загрузка данных для карты
     on<MapInitEvent>(_onMapInitEvent);
 
@@ -40,6 +53,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     on<MapCameraPositionChangedEvent>(_onMapCameraPositionChangedEvent);
 
     on<MapUpdate>(_onMapUpdate);
+
+    on<MapSetFilter>(_onMapSetFilter);
 
     /// Подписываемся на стрим изменения позиции юзера и прокидываем евент
     _positionSubscription = _geoService.onPositionChanged().listen((position) {
@@ -56,9 +71,24 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     });
   }
   void _onMapInitEvent(MapInitEvent event, emit) async {
+    final now = DateTime.now();
     final prevState = state;
 
-    emit(MapLoading());
+    if (prevState is MapLoaded) {
+      emit(MapLoading(filter: prevState.filter));
+    } else if (prevState is! MapLoading) {
+      emit(
+        MapLoading(
+          filter: FilterEntity(
+            category: Category.all,
+            dateTimeRange: DateTimeRange(
+              start: DateTime.now(),
+              end: DateTime.now(),
+            ),
+          ),
+        ),
+      );
+    }
 
     try {
       Position? currentPosition;
@@ -80,7 +110,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       /// Проверять, если [currentPosition] равна null эмитить MapErrorState
       // _userPosition = currentPosition;
       // _cameraPosition = currentPosition;
-      final mapComments = await _databaseService.getAllMapComments();
+      final mapComments =
+          await _getFilteredMapComments((state as MapLoading).filter);
+
       emit(
         MapLoaded(
           cameraPosition: prevState is MapLoaded
@@ -88,14 +120,22 @@ class MapBloc extends Bloc<MapEvent, MapState> {
               : currentPosition,
           userPosition: currentPosition,
           mapComments: mapComments,
+          filter: FilterEntity(
+            category: Category.all,
+            dateTimeRange: DateTimeRange(start: now, end: now),
+          ),
         ),
       );
     } catch (e) {
       emit(
-        const MapLoaded(
+        MapLoaded(
           cameraPosition: null,
           userPosition: null,
-          mapComments: [],
+          mapComments: const [],
+          filter: FilterEntity(
+            category: Category.all,
+            dateTimeRange: DateTimeRange(start: now, end: now),
+          ),
         ),
       );
     }
@@ -196,8 +236,58 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       return;
     }
 
-    final mapComments = await _databaseService.getAllMapComments();
+    final mapComments = await _getFilteredMapComments(currentState.filter);
 
     emit(currentState.copyWith(mapComments: mapComments));
+  }
+
+  FutureOr<void> _onMapSetFilter(
+    MapSetFilter event,
+    Emitter<MapState> emit,
+  ) async {
+    final currentState = state;
+    if (currentState is! MapLoaded) {
+      return;
+    }
+    emit(currentState.copyWith(filter: event.filter));
+    add(MapUpdate());
+  }
+
+  Future<List<MapComment>> _getFilteredMapComments(FilterEntity filter) async {
+    final allMapComments = await _databaseService.getAllMapComments();
+
+    final DateTime startDate = DateTime(
+      filter.dateTimeRange.start.year,
+      filter.dateTimeRange.start.month,
+      filter.dateTimeRange.start.day,
+      0,
+      0,
+      0,
+    );
+    final DateTime endDate = DateTime(
+      filter.dateTimeRange.end.year,
+      filter.dateTimeRange.end.month,
+      filter.dateTimeRange.end.day,
+      23,
+      59,
+      59,
+    );
+
+    final List<MapComment> filteredMapComments = [];
+    for (var mapComment in allMapComments) {
+      final creationDateTime = mapComment.creationDateTime;
+      if (creationDateTime.isAfter(startDate) &&
+          creationDateTime.isBefore(endDate)) {
+        if (filter.category == Category.all) {
+          filteredMapComments.add(mapComment);
+        } else {
+          if (mapComment.category == filter.category) {
+            filteredMapComments.add(mapComment);
+          }
+        }
+      }
+    }
+
+    return filteredMapComments;
   }
 }

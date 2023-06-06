@@ -12,12 +12,14 @@ import 'package:get_it/get_it.dart';
 final locator = GetIt.instance;
 
 void setUp() {
+  locator.registerSingleton<FileHelperServiceInterface>(FileHelperService());
   locator.registerLazySingleton<AuthServiceInterface>(() => AuthService());
-  locator
-      .registerLazySingleton<DatabaseServiceInterface>(() => DatabaseService());
+  locator.registerLazySingleton<DatabaseServiceInterface>(
+    () => DatabaseService(
+      fileHelperService: locator<FileHelperServiceInterface>(),
+    ),
+  );
   locator.registerLazySingleton<GeolocationServiceInterface>(
       () => GeolocationService());
   locator.registerLazySingleton<ImagePickerService>(() => ImagePickerService());
-  locator.registerLazySingleton<FileHelperServiceInterface>(
-      () => FileHelperService());
 }

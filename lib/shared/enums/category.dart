@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 enum Category {
+  @JsonValue('all')
+  all,
   @JsonValue('criminal')
   criminal,
   @JsonValue('accident')
@@ -36,6 +38,9 @@ extension ExtCategory on Category {
 
       case Category.other:
         return 'other';
+
+      case Category.all:
+        return 'all';
     }
   }
 }

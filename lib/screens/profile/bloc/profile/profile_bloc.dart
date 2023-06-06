@@ -31,20 +31,28 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   void _onProfileSaveEvent(
       ProfileSaveEvent event, Emitter<ProfileState> emit) async {
     final state = this.state;
+
     if (state is ProfileLoaded) {
       var userData = state.userData;
+
+      final updateUserProfile = event.userData.copyWith(
+        profileImageUrl: userData.profileImageUrl,
+      );
       try {
         print('ProfileSaving');
-        emit(ProfileSaving(userData: event.userData));
+        emit(ProfileSaving(userData: updateUserProfile));
         //TODO: For testing
         await Future.delayed(
           Duration(seconds: 1),
         );
+
         await _databaseService.updateUserData(
-            userId: event.userId, userData: event.userData);
+          userId: event.userId,
+          userData: updateUserProfile,
+        );
         emit(
           ProfileLoaded(
-              userData: event.userData, message: 'Your data has been saved'),
+              userData: updateUserProfile, message: 'Your data has been saved'),
         );
       } catch (e) {
         emit(

@@ -7,8 +7,10 @@ abstract class MapState extends Equatable {
 }
 
 class MapLoading extends MapState {
+  const MapLoading({required this.filter});
+  final FilterEntity filter;
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [filter];
 }
 
 class MapUpdateUserProfile extends MapState {
@@ -21,33 +23,33 @@ class MapLoaded extends MapState {
   final Position? cameraPosition;
   final List<MapComment> mapComments;
   final bool isCommentSaving;
+  final FilterEntity filter;
 
   const MapLoaded({
     required this.cameraPosition,
     required this.userPosition,
     required this.mapComments,
+    required this.filter,
     this.isCommentSaving = false,
   });
 
   @override
-  List<Object?> get props => [
-        userPosition,
-        mapComments,
-        cameraPosition,
-        isCommentSaving,
-      ];
+  List<Object?> get props =>
+      [userPosition, mapComments, cameraPosition, isCommentSaving, filter];
 
   MapLoaded copyWith({
     Position? userPosition,
     Position? cameraPosition,
     List<MapComment>? mapComments,
     bool? isCommentSaving,
+    FilterEntity? filter,
   }) {
     return MapLoaded(
       userPosition: userPosition ?? this.userPosition,
       cameraPosition: cameraPosition ?? this.cameraPosition,
       mapComments: mapComments ?? this.mapComments,
       isCommentSaving: isCommentSaving ?? this.isCommentSaving,
+      filter: filter ?? this.filter,
     );
   }
 }

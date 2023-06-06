@@ -6,12 +6,16 @@ import 'package:fire_base_app/screens/map/widgets/comment_button.dart';
 import 'package:fire_base_app/screens/map/widgets/map_button.dart';
 import 'package:fire_base_app/screens/map/widgets/map_comment_marker.dart';
 import 'package:fire_base_app/screens/map/widgets/map_comment_marker_cluster.dart';
+import 'package:fire_base_app/shared/entities/entities.dart';
+import 'package:fire_base_app/shared/enums/category.dart';
+import 'package:fire_base_app/shared/router.dart';
 import 'package:fire_base_app/shared/style.dart';
 import 'package:fire_base_app/shared/widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
@@ -19,17 +23,20 @@ import 'package:latlong2/latlong.dart';
 const Duration commentFormAnimationDuration = Duration(milliseconds: 500);
 
 class MapWidget extends StatefulWidget {
-  const MapWidget(
-      {Key? key,
-      required this.userPosition,
-      required this.mapComments,
-      this.isCommentSaving = false,
-      required this.cameraPosition})
-      : super(key: key);
+  const MapWidget({
+    Key? key,
+    required this.userPosition,
+    required this.mapComments,
+    this.isCommentSaving = false,
+    required this.cameraPosition,
+    required this.filter,
+  }) : super(key: key);
+
   final Position? userPosition;
   final List<MapComment> mapComments;
   final bool isCommentSaving;
   final Position? cameraPosition;
+  final FilterEntity filter;
 
   @override
   State<MapWidget> createState() => _MapWidgetState();
@@ -40,11 +47,15 @@ class _MapWidgetState extends State<MapWidget> {
   final _commentController = TextEditingController();
   late final String appUserUid;
 
+  Category _category = Category.all;
+  late DateTimeRange _dateTimeRange;
+
   @override
   void initState() {
     super.initState();
     appUserUid = context.read<AppUser?>()!.uid;
-    print('Map Widget init');
+    final now = DateTime.now();
+    _dateTimeRange = DateTimeRange(start: now, end: now);
   }
 
   @override
@@ -52,82 +63,97 @@ class _MapWidgetState extends State<MapWidget> {
     final theme = Theme.of(context);
     return Stack(
       children: [
-        InkWell(
-          onTap: () {
-            FocusScope.of(context).requestFocus(FocusNode());
-          },
-          child: FlutterMap(
-            mapController: _mapController,
-            options: MapOptions(
-              onPositionChanged: _onCameraPositionChanged,
-              plugins: [
-                MarkerClusterPlugin(),
-              ],
-              interactiveFlags: InteractiveFlag.pinchZoom |
-                  InteractiveFlag.drag |
-                  InteractiveFlag.doubleTapZoom |
-                  InteractiveFlag.pinchMove,
-              minZoom: 3,
-              maxZoom: 18,
-
-              /// Moscow center if cameraPosition is null
-              center: widget.cameraPosition != null
-                  ? LatLng(
-                      widget.cameraPosition!.latitude,
-                      widget.cameraPosition!.longitude,
-                    )
-                  : LatLng(55.754617, 37.622554),
-              zoom: 15,
-            ),
-            layers: [
-              TileLayerOptions(
-                urlTemplate:
-                    'https://tile2.maps.2gis.com/tiles?x={x}&y={y}&z={z}&v=1&ts=online_hd',
-              ),
-
-              MarkerClusterLayerOptions(
-                maxClusterRadius: 70,
-                size: Size(40, 40),
-                fitBoundsOptions: FitBoundsOptions(padding: EdgeInsets.all(50)),
-                spiderfyCircleRadius: 100,
-                centerMarkerOnClick: true,
-                showPolygon: false,
-                builder: (BuildContext context, List<Marker> markers) {
-                  if (markers == null || markers.isEmpty) {
-                    return const SizedBox();
-                  }
-                  return MapCommentMarkerCluster(
-                    text: markers.length.toString(),
-                  );
-                },
-                markers: widget.mapComments.isNotEmpty
-                    ? _getMarkersFromComments(widget.mapComments)
-                    : [],
-              ),
-
-              /// Marker for user position
-              MarkerLayerOptions(
-                markers: [
-                  if (widget.userPosition != null)
-                    Marker(
-                      builder: (BuildContext context) {
-                        return IgnorePointer(
-                          ignoring: true,
-                          child: Icon(
-                            FontAwesomeIcons.locationCrosshairs,
-                            color: theme.primaryColor,
-                            size: 20,
-                          ),
-                        );
-                      },
-                      point: LatLng(widget.userPosition!.latitude,
-                          widget.userPosition!.longitude),
-                    ),
-                ],
-              ),
+        FlutterMap(
+          mapController: _mapController,
+          options: MapOptions(
+            onPositionChanged: _onCameraPositionChanged,
+            plugins: [
+              MarkerClusterPlugin(),
             ],
+            interactiveFlags: InteractiveFlag.pinchZoom |
+                InteractiveFlag.drag |
+                InteractiveFlag.doubleTapZoom |
+                InteractiveFlag.pinchMove,
+            minZoom: 3,
+            maxZoom: 18,
+
+            /// Moscow center if cameraPosition is null
+            center: widget.cameraPosition != null
+                ? LatLng(
+                    widget.cameraPosition!.latitude,
+                    widget.cameraPosition!.longitude,
+                  )
+                : LatLng(55.754617, 37.622554),
+            zoom: 15,
+          ),
+          layers: [
+            TileLayerOptions(
+              urlTemplate:
+                  'https://tile2.maps.2gis.com/tiles?x={x}&y={y}&z={z}&v=1&ts=online_hd',
+            ),
+
+            MarkerClusterLayerOptions(
+              maxClusterRadius: 70,
+              size: Size(40, 40),
+              fitBoundsOptions: FitBoundsOptions(padding: EdgeInsets.all(50)),
+              spiderfyCircleRadius: 100,
+              centerMarkerOnClick: true,
+              showPolygon: false,
+              builder: (BuildContext context, List<Marker> markers) {
+                if (markers == null || markers.isEmpty) {
+                  return const SizedBox();
+                }
+                return MapCommentMarkerCluster(
+                  text: markers.length.toString(),
+                );
+              },
+              markers: widget.mapComments.isNotEmpty
+                  ? _getMarkersFromComments(widget.mapComments)
+                  : [],
+            ),
+
+            /// Marker for user position
+            MarkerLayerOptions(
+              markers: [
+                if (widget.userPosition != null)
+                  Marker(
+                    builder: (BuildContext context) {
+                      return IgnorePointer(
+                        ignoring: true,
+                        child: Icon(
+                          FontAwesomeIcons.locationCrosshairs,
+                          color: theme.primaryColor,
+                          size: 20,
+                        ),
+                      );
+                    },
+                    point: LatLng(widget.userPosition!.latitude,
+                        widget.userPosition!.longitude),
+                  ),
+              ],
+            ),
+          ],
+        ),
+        Positioned.fill(
+          child: Align(
+            alignment: Alignment.topRight,
+            child: Padding(
+              padding: const EdgeInsets.all(8),
+              child: IconButton(
+                icon: SvgPicture.asset(
+                  'assets/filter.svg',
+                  colorFilter: ColorFilter.mode(
+                    Theme.of(context).primaryColor,
+                    BlendMode.srcIn,
+                  ),
+                  height: 24,
+                ),
+                onPressed: _onFilterTap,
+              ),
+            ),
           ),
         ),
+
         IgnorePointer(
           ignoring: true,
           child: Center(
@@ -287,5 +313,17 @@ class _MapWidgetState extends State<MapWidget> {
         longitude: _mapController.center.longitude,
       ),
     );
+  }
+
+  void _onFilterTap() async {
+    final response = (await Navigator.of(context).pushNamed(
+      Routes.filter,
+      arguments: widget.filter,
+    )) as FilterEntity?;
+    if (response == null) {
+      return;
+    }
+
+    context.read<MapBloc>().add(MapSetFilter(response));
   }
 }

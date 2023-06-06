@@ -106,7 +106,8 @@ class _AddMapCommentFormState extends State<AddMapCommentForm> {
                                       child: Text(e.getTitle(context)),
                                     ),
                                   )
-                                  .toList(),
+                                  .toList()
+                                ..removeAt(0),
                             ),
                           ],
                         ),

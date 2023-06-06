@@ -41,10 +41,6 @@ class _MapCommentScreenState extends State<MapCommentScreen> {
     return BlocBuilder<MapCommentBloc, MapCommentState>(
       builder: (context, state) {
         if (state is MapCommentLoaded) {
-          final imageFiles = state.mapComment.files
-              .where((element) => element.fileType == FileType.image)
-              .toList();
-
           final mapComment = state.mapComment;
 
           return Padding(
@@ -76,6 +72,18 @@ class _MapCommentScreenState extends State<MapCommentScreen> {
                                 text: 'Comment by user: ',
                                 style: theme.textTheme.bodyMedium,
                               ),
+                              WidgetSpan(
+                                alignment: PlaceholderAlignment.middle,
+                                child: InkWell(
+                                  onTap: () => _openUserProfileViewScreen(
+                                    state.userData,
+                                  ),
+                                  child: ProfileAvatar(
+                                    avatarUrl: state.userData.profileImageUrl,
+                                    radius: 8,
+                                  ),
+                                ),
+                              ),
                               TextSpan(
                                 text: state.userData.name,
                                 style: theme.textTheme.bodyMedium?.copyWith(
@@ -83,7 +91,8 @@ class _MapCommentScreenState extends State<MapCommentScreen> {
                                 ),
                                 recognizer: TapGestureRecognizer()
                                   ..onTap = () => _openUserProfileViewScreen(
-                                      state.userData),
+                                        state.userData,
+                                      ),
                               ),
                             ],
                           ),

@@ -38,6 +38,9 @@ class MapComment {
         .format(DateTime.fromMillisecondsSinceEpoch(createdTs!));
   }
 
+  DateTime get creationDateTime =>
+      DateTime.fromMillisecondsSinceEpoch(createdTs ?? 0);
+
   factory MapComment.fromJson(Map<String, dynamic> json) =>
       _$MapCommentFromJson(json);
   Map<String, dynamic> toJson() => _$MapCommentToJson(this);
